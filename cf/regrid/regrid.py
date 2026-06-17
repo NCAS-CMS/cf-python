@@ -148,7 +148,7 @@ def regrid(
     return_operator=False,
     check_coordinates=False,
     min_weight=None,
-    max_masked=0,
+    mtol=0,
     weights_file=None,
     return_esmpy_regrid_operator=False,
     dst_grid_partitions=1,
@@ -282,11 +282,10 @@ def regrid(
 
             **Linear regridding**
 
-            Destination grid cell j will only be masked if a) it is
-            masked in the destination grid definition; or b) the
-            number of ``w_ji >= min_weight`` for those masked source
-            grid cells i for which ``w_ji > 0`` exceeds the
-            *max_masked* parameter.
+            Destination grid cell ``j`` will only be masked if a) it
+            is masked in the destination grid definition; or b) the
+            fraction of those masked source grid cells ``i`` for which
+            ``w_ji > min_weight`` exceeds the *mtol* parameter.
 
             **Conservative first-order regridding**
 
@@ -295,21 +294,35 @@ def regrid(
             of ``w_ji`` for all non-masked source grid cells i is
             strictly less than *min_weight*.
 
-        max_masked: `int`, optional
+        mtol: number, optional
             For linear regridding only. Ignored for all other
             regridding methods.
 
-            The maximum allow number of masked source cells which are
-            allowed to be ignored when calculating a non-masked
-            destination cell. When masked source cells are ignored,
-            the weights w_ji of non-masked source cells i are adjusted
-            so that they sum to 1.
+            The fraction, in the range ``[0, 1]``, of masked source
+            cells which are allowed to be ignored when calculating a
+            non-masked destination cell. When masked source cells are
+            ignored, the weights of the non-masked source cells are
+            adjusted so that they sum to 1.
 
-            By default it is ``0``, meaning that destination grid cell
-            j will be masked if source cell i is masked and ``w_ji >=
-            min_weight``. If set to ``N``, then destination grid cell
-            j will be masked if more than ``N`` source cells i are
-            masked with ``w_ji >= min_weight``.
+            Define ``w_ji`` as the multiplicative weight that defines
+            how much of ``Vs_i`` (the value in source grid cell ``i``)
+            contributes to ``Vd_j`` (the value in destination grid
+            cell ``j``).
+
+            A destination grid cell j will be masked if *mtol*
+            multiplied by the total number of source cells i for which
+            ``w_ji >= min_weight`` is greater then the number of those
+            source grid cells which are masked.
+
+            By default *mtol* is ``0``, meaning that destination grid
+            cell j will be masked if any source cell i for which
+            ``w_ji >= min_weight`` is masked.
+
+            For instance, for a rectilinear source grid for which up
+            to 4 source grid cells contribute to each destination grid
+            cell, if *mtol* is in the range ``[0.5, 0.75)`` then a
+            destination grid cell will in general only be be masked if
+            three or more of its source grid cells are masked.
 
             .. versionadded:: NEXTVERSION
 
@@ -399,10 +412,10 @@ def regrid(
     """
     debug = is_log_level_debug(logger)
 
-    if not isinstance(max_masked, int) or max_masked < 0:
+    if mtol < 0 or mtol > 1:
         raise ValueError(
-            "The max_masked keyword must be a non-negative integer. "
-            f"Got: {max_masked!r}"
+            "The mtol keyword must be a nunber in the range [0, 1]. "
+            f"Got: {mtol!r}"
         )
 
     if not inplace:
@@ -832,7 +845,7 @@ def regrid(
         regrid_axes=src_grid.axis_indices,
         regridded_sizes=regridded_axis_sizes,
         min_weight=min_weight,
-        max_masked=max_masked,
+        mtol=mtol,
     )
 
     # ----------------------------------------------------------------

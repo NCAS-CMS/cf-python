@@ -13659,7 +13659,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
-        max_masked=0,
+        mtol=0,
         weights_file=None,
         src_z=None,
         dst_z=None,
@@ -13864,7 +13864,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
-            {{max_masked: `int`, optional}}
+            {{regrid mtol: number, optional}}
 
                 .. versionadded:: NEXTVERSION
 
@@ -14029,7 +14029,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
-            max_masked=max_masked,
+            mtol=mtol,
             weights_file=weights_file,
             src_z=src_z,
             dst_z=dst_z,
@@ -14056,7 +14056,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return_operator=False,
         check_coordinates=False,
         min_weight=None,
-        max_masked=0,
+        mtol=0,
         weights_file=None,
         src_z=None,
         dst_z=None,
@@ -14198,7 +14198,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.14.0
 
-            {{max_masked: `int`, optional}}
+            {{regrid mtol: number, optional}}
 
                 .. versionadded:: NEXTVERSION
 
@@ -14347,7 +14347,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return_operator=return_operator,
             check_coordinates=check_coordinates,
             min_weight=min_weight,
-            max_masked=max_masked,
+            mtol=mtol,
             weights_file=weights_file,
             src_z=src_z,
             dst_z=dst_z,

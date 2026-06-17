@@ -838,8 +838,8 @@ class RegridTest(unittest.TestCase):
         self.assertIsInstance(operc, esmpy.api.regrid.Regrid)
 
     @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
-    def test_regrids_max_masked(self):
-        """Test max_masked keyword to regrids."""
+    def test_regrids_mtol(self):
+        """Test mtol keyword to regrids."""
         self.assertFalse(cf.regrid_logging())
 
         # Source grid
@@ -875,47 +875,50 @@ class RegridTest(unittest.TestCase):
             )
         )
 
-        x = s.regrids(d, method="linear", use_dst_mask=False, max_masked=0)
-        self.assertTrue(
-            np.array_equal(
-                x.data.mask,
-                [
-                    [True, True, True, True, True, True, True, True],
-                    [True, True, True, True, True, True, True, True],
-                    [True, False, True, True, True, True, True, True],
-                    [True, False, False, True, True, True, True, True],
-                ],
+        for n in (0, 0.24):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                    ],
+                )
             )
-        )
 
-        x = s.regrids(d, method="linear", use_dst_mask=False, max_masked=1)
-        self.assertTrue(
-            np.array_equal(
-                x.data.mask,
-                [
-                    [True, True, True, True, True, True, True, True],
-                    [True, False, True, True, True, True, True, True],
-                    [True, False, False, True, True, True, True, True],
-                    [True, False, False, False, True, True, True, True],
-                ],
+        for n in (0.25, 0.49):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                    ],
+                )
             )
-        )
 
-        x = s.regrids(d, method="linear", use_dst_mask=False, max_masked=2)
-        self.assertTrue(
-            np.array_equal(
-                x.data.mask,
-                [
-                    [True, True, True, True, True, True, True, True],
-                    [False, False, True, True, True, True, True, True],
-                    [False, False, False, True, True, True, True, True],
-                    [False, False, False, False, True, True, True, True],
-                ],
+        for n in (0.5, 0.74):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [False, False, True, True, True, True, True, True],
+                        [False, False, False, True, True, True, True, True],
+                        [False, False, False, False, True, True, True, True],
+                    ],
+                )
             )
-        )
 
-        for n in (3, 4, 5):
-            x = s.regrids(d, method="linear", use_dst_mask=False, max_masked=n)
+        for n in (0.75, 0.99, 1):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
             self.assertTrue(
                 np.array_equal(
                     x.data.mask,
@@ -928,13 +931,13 @@ class RegridTest(unittest.TestCase):
                 )
             )
 
-        # Check bad values of max_masked
-        for n in (-1, 3.14, "string", None):
+        # Check bad values of mtol
+        for n in (-1, 3.14):
             with self.assertRaises(ValueError):
-                x = s.regrids(d, method="linear", max_masked=n)
+                x = s.regrids(d, method="linear", mtol=n)
 
-    def test_regridc_max_masked(self):
-        """Test max_masked keyword to regridc."""
+    def test_regridc_mtol(self):
+        """Test mtol keyword to regridc."""
         self.assertFalse(cf.regrid_logging())
 
         # Source grid
@@ -972,54 +975,57 @@ class RegridTest(unittest.TestCase):
 
         axes = ["Y", "X"]
 
-        x = s.regridc(
-            d, axes=axes, method="linear", use_dst_mask=False, max_masked=0
-        )
-        self.assertTrue(
-            np.array_equal(
-                x.data.mask,
-                [
-                    [True, True, True, True, True, True, True, True],
-                    [True, True, True, True, True, True, True, True],
-                    [True, False, True, True, True, True, True, True],
-                    [True, False, False, True, True, True, True, True],
-                ],
-            )
-        )
-
-        x = s.regridc(
-            d, axes=axes, method="linear", use_dst_mask=False, max_masked=1
-        )
-        self.assertTrue(
-            np.array_equal(
-                x.data.mask,
-                [
-                    [True, True, True, True, True, True, True, True],
-                    [True, False, True, True, True, True, True, True],
-                    [True, False, False, True, True, True, True, True],
-                    [True, False, False, False, True, True, True, True],
-                ],
-            )
-        )
-
-        x = s.regridc(
-            d, axes=axes, method="linear", use_dst_mask=False, max_masked=2
-        )
-        self.assertTrue(
-            np.array_equal(
-                x.data.mask,
-                [
-                    [True, True, True, True, True, True, True, True],
-                    [True, False, True, True, True, True, True, True],
-                    [True, False, False, True, True, True, True, True],
-                    [True, False, False, False, True, True, True, True],
-                ],
-            )
-        )
-
-        for n in (3, 4, 5):
+        for n in (0, 0.24):
             x = s.regridc(
-                d, axes=axes, method="linear", use_dst_mask=False, max_masked=n
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.25, 0.49):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.5, 0.74):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.75, 1):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
             )
             self.assertTrue(
                 np.array_equal(

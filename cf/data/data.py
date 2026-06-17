@@ -2345,7 +2345,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         regrid_axes=None,
         regridded_sizes=None,
         min_weight=None,
-        max_masked=0,
+        mtol=0,
     ):
         """Regrid the data.
 
@@ -2381,7 +2381,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{min_weight: float, optional}}
 
-            {{max_masked: `int`, optional}}
+            {{regrid mtol: number, optional}}
 
                 .. versionadded:: NEXVERSION
 
@@ -2483,7 +2483,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             dst_shape=operator.dst_shape,
             axis_order=non_regrid_axes + list(regrid_axes),
             min_weight=min_weight,
-            max_masked=max_masked,
+            mtol=mtol,
         )
 
         # Performance note:
