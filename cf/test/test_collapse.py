@@ -37,6 +37,9 @@ class Field_collapseTest(unittest.TestCase):
         self.filename2 = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "test_file2.nc"
         )
+        self.cell_measures = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "cell_measures.nc"
+        )
 
     def test_Field_collapse_CLIMATOLOGICAL_TIME(self):
         verbose = False
@@ -852,6 +855,31 @@ class Field_collapseTest(unittest.TestCase):
         self.assertTrue(
             g1.coordinate_reference("grid_mapping_name:latitude_longitude")
         )
+
+    def test_Field_cell_measures(self):
+        """Test collapse weights by area and volume cell measures."""
+        f = cf.read(self.cell_measures)[0]
+        self.assertEqual(f.shape, (1, 5, 5, 5))
+        self.assertEqual(f.cell_measure("measure:area").shape, (5, 5))
+        self.assertEqual(f.cell_measure("measure:volume").shape, (1, 5, 5, 5))
+
+        f.collapse("area: mean", weights="area")
+        f.collapse("volume: mean", weights="volume")
+
+        self.assertEqual(f.weights("area").shape, (5, 5))
+        self.assertEqual(f.weights("volume").shape, (5, 5, 5))
+
+        g = f[..., 0]
+
+        self.assertEqual(g.shape, (1, 5, 5, 1))
+        self.assertEqual(g.cell_measure("measure:area").shape, (5, 1))
+        self.assertEqual(g.cell_measure("measure:volume").shape, (1, 5, 5, 1))
+
+        g.collapse("area: mean", weights="area")
+        g.collapse("volume: mean", weights="volume")
+
+        self.assertEqual(g.weights("area").shape, (5,))
+        self.assertEqual(g.weights("volume").shape, (5, 5))
 
 
 if __name__ == "__main__":
