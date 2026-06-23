@@ -311,7 +311,7 @@ def regrid(
 
             A destination grid cell j will be masked if *mtol*
             multiplied by the total number of source cells i for which
-            ``w_ji >= min_weight`` is greater then the number of those
+            ``w_ji >= min_weight`` is greater than the number of those
             source grid cells which are masked.
 
             By default *mtol* is ``0``, meaning that destination grid
@@ -321,7 +321,7 @@ def regrid(
             For instance, for a rectilinear source grid for which up
             to 4 source grid cells contribute to each destination grid
             cell, if *mtol* is in the range ``[0.5, 0.75)`` then a
-            destination grid cell will in general only be be masked if
+            destination grid cell will in general only be masked if
             three or more of its source grid cells are masked.
 
             .. versionadded:: NEXTVERSION

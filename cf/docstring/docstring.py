@@ -422,7 +422,7 @@ _docstring_substitution_definitions = {
 
                 A destination grid cell j will be masked if *mtol*
                 multiplied by the total number of source cells i for
-                which ``w_ji >= min_weight`` is greater then the
+                which ``w_ji >= min_weight`` is greater than the
                 number of those source grid cells which are masked.
 
                 By default *mtol* is ``0``, meaning that destination
@@ -433,7 +433,7 @@ _docstring_substitution_definitions = {
                 up to 4 source grid cells contribute to each
                 destination grid cell, if *mtol* is in the range
                 ``[0.5, 0.75)`` then a destination grid cell will in
-                general only be be masked if three or more of its
+                general only be masked if three or more of its
                 source grid cells are masked.""",
     # weights_file
     "{{weights_file: `str` or `None`, optional}}": """weights_file: `str` or `None`, optional
