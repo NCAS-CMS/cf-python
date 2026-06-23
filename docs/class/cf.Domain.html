@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -128,7 +128,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.Domain">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/domain.py#L13-L1125"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Domain" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/domain.py#L13-L1126"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Domain" title="Link to this definition">¶</a></dt>
 <dd><p>A domain construct of the CF data model.</p>
 <p>The domain represents a set of discrete “locations” in what
 generally would be a multi-dimensional space, either in the real
@@ -505,8 +505,14 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.copy.html#cf.Domain.copy" title="cf.Domain.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.create_regular.html#cf.Domain.create_regular" title="cf.Domain.create_regular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_regular</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_latlon_coordinates</span></code></p></td>
+<td><p>Create latitude and longitude coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.create_regular.html#cf.Domain.create_regular" title="cf.Domain.create_regular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_regular</span></code></a></p></td>
 <td><p>Create a new domain with the regular longitudes and latitudes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_healpix</span></code></p></td>
+<td><p>Create a new global HEALPix grid.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.creation_commands.html#cf.Domain.creation_commands" title="cf.Domain.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
 <td><p>Return the commands that would create the domain construct.</p></td>
@@ -540,6 +546,27 @@ parameters are not deep copied.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.uncompress.html#cf.Domain.uncompress" title="cf.Domain.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
 <td><p>Uncompress the domain construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.has_data.html#cf.Domain.has_data" title="cf.Domain.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.has_geometry.html#cf.Domain.has_geometry" title="cf.Domain.has_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_geometry</span></code></a></p></td>
+<td><p>Return whether or not any coordinates have cell geometries.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.apply_masking.html#cf.Domain.apply_masking" title="cf.Domain.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.get_original_filenames.html#cf.Domain.get_original_filenames" title="cf.Domain.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<td><p>The names of files containing the original data and metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.close.html#cf.Domain.close" title="cf.Domain.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<td><p>Close all files referenced by the domain construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.persist.html#cf.Domain.persist" title="cf.Domain.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
+<td><p>Persist data into memory.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></p></td>
+<td><p>Return the radius of a latitude-longitude plane defined in spherical polar coordinates.</p></td>
 </tr>
 </tbody>
 </table>
@@ -584,6 +611,25 @@ parameters are not deep copied.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.subspace.html#cf.Domain.subspace" title="cf.Domain.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p></td>
 <td><p>Create a subspace of the field construct.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="healpix-grids">
+<h2>HEALPix grids<a class="headerlink" href="#healpix-grids" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_info</span></code></p></td>
+<td><p>Get information about the HEALPix grid, if there is one.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_change_indexing_scheme</span></code></p></td>
+<td><p>Change the indexing scheme of HEALPix indices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healpix_to_ugrid</span></code></p></td>
+<td><p>Convert a HEALPix domain to a UGRID domain.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_healpix</span></code></p></td>
+<td><p>Create a new global HEALPix grid.</p></td>
 </tr>
 </tbody>
 </table>
@@ -644,6 +690,34 @@ parameters are not deep copied.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_group_attributes.html#cf.Domain.nc_set_group_attributes" title="cf.Domain.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a></p></td>
 <td><p>Set properties to be written as netCDF group attributes.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mesh-related">
+<h3>Mesh related<a class="headerlink" href="#mesh-related" title="Link to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_mesh_variable</span></code></p></td>
+<td><p>Remove the netCDF mesh variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_mesh_variable</span></code></p></td>
+<td><p>Return the netCDF mesh variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_mesh_variable</span></code></p></td>
+<td><p>Whether the netCDF mesh variable name is set.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable</span></code></p></td>
+<td><p>Set the netCDF mesh variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_mesh_variable_groups</span></code></p></td>
+<td><p>Remove the netCDF mesh variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_mesh_variable_groups</span></code></p></td>
+<td><p>Return the netCDF mesh variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable_groups</span></code></p></td>
+<td><p>Set the netCDF mesh_variable group hierarchy.</p></td>
 </tr>
 </tbody>
 </table>
@@ -740,6 +814,17 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
+</section>
+<section id="ugrid">
+<h2>UGRID<a class="headerlink" href="#ugrid" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">node_coordinates</span></code></p></td>
+<td><p>Create the node coordinates for a UGRID mesh topology.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="aliases">
 <h2>Aliases<a class="headerlink" href="#aliases" title="Link to this heading">¶</a></h2>
@@ -864,7 +949,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

@@ -180,18 +180,27 @@ Miscellaneous
    ~cf.Domain.apply_masking
    ~cf.Domain.climatological_time_axes
    ~cf.Domain.copy
+   ~cf.Domain.create_latlon_coordinates
    ~cf.Domain.create_regular   
+   ~cf.Domain.create_healpix
    ~cf.Domain.creation_commands
    ~cf.Domain.equals
    ~cf.Domain.fromconstructs
    ~cf.Domain.has_bounds
    ~cf.Domain.has_data
    ~cf.Domain.has_geometry
-   ~cf.Domain.apply_masking   
+   ~cf.Domain.apply_masking
    ~cf.Domain.get_original_filenames
    ~cf.Domain.close
    ~cf.Domain.persist
    ~cf.Domain.uncompress
+   ~cf.Domain.has_data
+   ~cf.Domain.has_geometry
+   ~cf.Domain.apply_masking   
+   ~cf.Domain.get_original_filenames
+   ~cf.Domain.close
+   ~cf.Domain.persist
+   ~cf.Domain.radius
 
 Domain axes
 -----------
@@ -220,6 +229,19 @@ Subspacing
 
    ~cf.Domain.indices
    ~cf.Domain.subspace
+
+HEALPix grids
+-------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.healpix_info
+   ~cf.Domain.healpix_change_indexing_scheme
+   ~cf.Domain.healpix_to_ugrid
+   ~cf.Domain.create_healpix
 
 NetCDF
 ------
@@ -271,7 +293,23 @@ Groups
    ~cf.Domain.nc_clear_group_attributes
    ~cf.Domain.nc_set_group_attribute
    ~cf.Domain.nc_set_group_attributes
-  
+
+Mesh related
+^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.nc_del_mesh_variable
+   ~cf.Domain.nc_get_mesh_variable
+   ~cf.Domain.nc_has_mesh_variable
+   ~cf.Domain.nc_set_mesh_variable
+   ~cf.Domain.nc_clear_mesh_variable_groups
+   ~cf.Domain.nc_mesh_variable_groups
+   ~cf.Domain.nc_set_mesh_variable_groups
+
 Aggregation
 -----------
 
@@ -337,7 +375,20 @@ Dataset compliance
    :template: method.rst
 
    ~cf.Domain.dataset_compliance
-   
+
+UGRID
+-----
+
+.. rubric:: Methods
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.node_coordinates
+
 Aliases
 -------
 

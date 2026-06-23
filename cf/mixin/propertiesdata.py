@@ -530,6 +530,8 @@ class PropertiesData(Properties):
     def __query_isclose__(self, value, rtol, atol):
         """Query interface method for an "is close" condition.
 
+        .. versionadded:: 3.15.2
+
         :Parameters:
 
             value:
@@ -540,8 +542,6 @@ class PropertiesData(Properties):
 
             atol: number
                 The tolerance on absolute numerical differences.
-
-        .. versionadded:: 3.15.2
 
         """
         data = self.get_data(None, _fill_value=None)
@@ -5172,6 +5172,8 @@ class PropertiesData(Properties):
             {{block_size_limit: `int`, optional}}
 
             {{balance: `bool`, optional}}
+
+            {{inplace: `bool`, optional}}
 
         :Returns:
 

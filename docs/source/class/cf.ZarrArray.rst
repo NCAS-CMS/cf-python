@@ -23,6 +23,7 @@ Inspection
    ~cf.ZarrArray.get_compression_type
    ~cf.ZarrArray.get_subspace
    ~cf.ZarrArray.get_attributes
+   ~cf.ZarrArray.get_variable
    ~cf.ZarrArray.index
    ~cf.ZarrArray.is_subspace
    
@@ -100,8 +101,8 @@ Miscellaneous
    ~cf.ZarrArray.copy
    ~cf.ZarrArray.to_memory
    
-Active storage
---------------
+Active and remote storage
+-------------------------
 
 .. autosummary::
    :nosignatures:
@@ -109,7 +110,9 @@ Active storage
    :template: method.rst
 
    ~cf.ZarrArray.active_storage
-   
+   ~cf.ZarrArray.get_storage_protocol
+   ~cf.ZarrArray.has_remote_storage_protocol
+
 Special
 -------
 

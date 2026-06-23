@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -129,11 +129,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.CellConnectivity.persist<a class="headerlink" href="#cf-cellconnectivity-persist" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.CellConnectivity.persist">
-<span class="sig-prename descclassname"><span class="pre">CellConnectivity.</span></span><span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CellConnectivity.persist" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">CellConnectivity.</span></span><span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CellConnectivity.persist" title="Link to this definition">¶</a></dt>
 <dd><p>Persist data into memory.</p>
 <p>Persisting turns an underlying lazy dask array into an
 equivalent chunked dask array, but now with the results fully
-computed and in memory. This can avoid the expense of
+computed and cached in memory. This can avoid the expense of
 re-reading the data from disk, or re-computing it, when the
 data is accessed on multiple occasions.</p>
 <p><strong>Performance</strong></p>
@@ -144,7 +144,7 @@ data is accessed on multiple occasions.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="../attribute/cf.CellConnectivity.array.html#cf.CellConnectivity.array" title="cf.CellConnectivity.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>, <a class="reference internal" href="../attribute/cf.CellConnectivity.datetime_array.html#cf.CellConnectivity.datetime_array" title="cf.CellConnectivity.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.persist</span></code></p>
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Data.persist.html#cfdm.Data.persist" title="(in Python cfdm package v1.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.persist</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -174,7 +174,7 @@ was in-place then <a class="reference external" href="https://docs.python.org/3/
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

@@ -98,7 +98,8 @@ class DomainTopology(mixin.PropertiesData, cfdm.DomainTopology):
     boundary vertices is undefined and so volume cells are currently
     omitted from the CF data model.
 
-    See CF Appendix I "The CF Data Model".
+    See CF Appendix I: The CF Data Model.
+    https://doi.org/10.5281/zenodo.14274886
 
     **NetCDF interface**
 

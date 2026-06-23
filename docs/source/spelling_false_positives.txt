@@ -184,6 +184,7 @@ fieldancillary
 FieldAncillary
 FieldList
 filepath
+filesystem
 fillvals
 fillValue
 FillValue
@@ -215,6 +216,7 @@ getprop
 getslice
 ggroup
 GiB
+globbing
 gopen
 gpos
 gregorian
@@ -287,6 +289,8 @@ jja
 Jupyter
 kB
 keepdims
+Kerchunk
+Kerchunked
 Kinoshita
 Kotla
 Kristian
@@ -359,6 +363,7 @@ nsb
 nsd
 numblocks
 numpy
+nuniq
 onwards
 openmpi
 optimize

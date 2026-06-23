@@ -4,8 +4,9 @@ import faulthandler
 import os
 import tempfile
 import unittest
+from importlib.util import find_spec
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -35,6 +36,9 @@ class Field_collapseTest(unittest.TestCase):
     def setUp(self):
         self.filename2 = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "test_file2.nc"
+        )
+        self.cell_measures = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "cell_measures.nc"
         )
 
     def test_Field_collapse_CLIMATOLOGICAL_TIME(self):
@@ -371,7 +375,7 @@ class Field_collapseTest(unittest.TestCase):
         self.assertEqual(g.shape, (12, 4, 5))
 
         for m in range(1, 13):
-            a = numpy.empty((5, 4, 5))
+            a = np.empty((5, 4, 5))
             for i, year in enumerate(
                 f.subspace(T=cf.month(m)).coord("T").year.unique()
             ):
@@ -381,7 +385,7 @@ class Field_collapseTest(unittest.TestCase):
                 a[i] = x.array
 
             a = a.min(axis=0)
-            self.assertTrue(numpy.allclose(a, g.array[m % 12]))
+            self.assertTrue(np.allclose(a, g.array[m % 12]))
 
         g = f.collapse("T: mean", group=360)
 
@@ -824,6 +828,58 @@ class Field_collapseTest(unittest.TestCase):
 
         # Check the collpsed fields writes
         cf.write(f, tmpfile)
+
+    # Note: here only need healpix for cf under-the-hood code, not in test
+    # directly, so no need to actually import healpix, just test it is there.
+    @unittest.skipUnless(find_spec("healpix"), "Requires 'healpix' package.")
+    def test_Field_collapse_HEALPix(self):
+        """Test HEALPix collapses."""
+        f0 = cf.example_field(12)
+        f1 = cf.example_field(13)
+
+        g0 = f0.collapse("area: mean", weights=False)
+        g1 = f1.collapse("area: mean", weights=False)
+        self.assertFalse(np.allclose(g0, g1))
+
+        g0 = f0.collapse("area: mean", weights=True)
+        g1 = f1.collapse("area: mean", weights=True)
+        self.assertTrue(g1.equals(g0))
+        self.assertTrue(
+            g0.coordinate_reference("grid_mapping_name:latitude_longitude")
+        )
+
+        g0 = f0[:, 0].collapse("area: mean", weights=True)
+        g1 = f1[:, :4].collapse("area: mean", weights=True)
+        self.assertTrue(np.allclose(g0, g1))
+        self.assertTrue(g0.coordinate_reference("grid_mapping_name:healpix"))
+        self.assertTrue(
+            g1.coordinate_reference("grid_mapping_name:latitude_longitude")
+        )
+
+    def test_Field_cell_measures(self):
+        """Test collapse weights by area and volume cell measures."""
+        f = cf.read(self.cell_measures)[0]
+        self.assertEqual(f.shape, (1, 5, 5, 5))
+        self.assertEqual(f.cell_measure("measure:area").shape, (5, 5))
+        self.assertEqual(f.cell_measure("measure:volume").shape, (1, 5, 5, 5))
+
+        f.collapse("area: mean", weights="area")
+        f.collapse("volume: mean", weights="volume")
+
+        self.assertEqual(f.weights("area").shape, (5, 5))
+        self.assertEqual(f.weights("volume").shape, (5, 5, 5))
+
+        g = f[..., 0]
+
+        self.assertEqual(g.shape, (1, 5, 5, 1))
+        self.assertEqual(g.cell_measure("measure:area").shape, (5, 1))
+        self.assertEqual(g.cell_measure("measure:volume").shape, (1, 5, 5, 1))
+
+        g.collapse("area: mean", weights="area")
+        g.collapse("volume: mean", weights="volume")
+
+        self.assertEqual(g.weights("area").shape, (5,))
+        self.assertEqual(g.weights("volume").shape, (5, 5))
 
 
 if __name__ == "__main__":

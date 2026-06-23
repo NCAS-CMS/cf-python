@@ -29,8 +29,9 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
-    "{{formula terms links}}": """See CF section 4.3.3 "Parametric Vertical Coordinate" and CF
-    Appendix D "Parametric Vertical Coordinates" for details.""",
+    "{{formula terms links}}": """See CF section 4.3.3: Parametric Vertical Coordinate and
+    CF Appendix D: Parametric Vertical Coordinates.
+    https://doi.org/10.5281/zenodo.14274886""",
     # ----------------------------------------------------------------
     # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
@@ -392,8 +393,9 @@ _docstring_substitution_definitions = {
 
                 Destination grid cell ``j`` will only be masked if a)
                 it is masked in the destination grid definition; or b)
-                ``w_ji >= min_weight`` for those masked source grid
-                cells ``i`` for which ``w_ji > 0``.
+                the fraction of those masked source grid cells ``i``
+                for which ``w_ji > min_weight`` exceeds the *mtol*
+                parameter.
 
                 **Conservative first-order regridding**
 
@@ -401,6 +403,38 @@ _docstring_substitution_definitions = {
                 it is masked in the destination grid definition; or b)
                 the sum of ``w_ji`` for all non-masked source grid
                 cells ``i`` is strictly less than *min_weight*.""",
+    # regrid mtol
+    "{{regrid mtol: number, optional}}": """regrid mtol: number, optional
+                For linear regridding only. Ignored for all other
+                regridding methods.
+
+                The fraction, in the range ``[0, 1]``, of masked
+                source cells which are allowed to be ignored when
+                calculating a non-masked destination cell. When masked
+                source cells are ignored, the weights of the
+                non-masked source cells are adjusted so that they sum
+                to 1.
+
+                Define ``w_ji`` as the multiplicative weight that
+                defines how much of ``Vs_i`` (the value in source grid
+                cell ``i``) contributes to ``Vd_j`` (the value in
+                destination grid cell ``j``).
+
+                A destination grid cell j will be masked if *mtol*
+                multiplied by the total number of source cells i for
+                which ``w_ji >= min_weight`` is greater than the
+                number of those source grid cells which are masked.
+
+                By default *mtol* is ``0``, meaning that destination
+                grid cell j will be masked if any source cell i for
+                which ``w_ji >= min_weight`` is masked.
+
+                For instance, for a rectilinear source grid for which
+                up to 4 source grid cells contribute to each
+                destination grid cell, if *mtol* is in the range
+                ``[0.5, 0.75)`` then a destination grid cell will in
+                general only be masked if three or more of its
+                source grid cells are masked.""",
     # weights_file
     "{{weights_file: `str` or `None`, optional}}": """weights_file: `str` or `None`, optional
                 Provide a netCDF file that contains, or will contain,
@@ -569,43 +603,92 @@ _docstring_substitution_definitions = {
                 If True then do not perform the regridding, rather
                 return the `esmpy.Regrid` instance that defines the
                 regridding operation.""",
+    # HEALPix indexing schemes
+    "{{HEALPix indexing schemes}}": """
+
+                The nested scheme indexes with consecutive indices the
+                pixels inside a single coarser refinement level
+                cell. When the indices are sorted monotonically, the
+                scheme is optimised for data retrievals within a
+                geographical range.
+
+                The ring scheme indexes with consecutive indices the
+                pixels moving down from the north to the south pole
+                along each isolatitude ring. When the indices are
+                sorted monotonically, the scheme is optimised for data
+                retrievals along latitude bands, such as required for
+                spherical harmonics.
+
+                When the HEALPix axis is ordered with monotonically
+                increasing indices, each type of indexing scheme is
+                optimised for different types of operation. For
+                instance, the ring scheme is optimised for Fourier
+                transforms with spherical harmonics; and the nested
+                scheme is optimised for geographical nearest-neighbour
+                operations such as decreasing the refinement level.
+
+                A Multi-Order Coverage (MOC) has pixels with different
+                refinement levels stored in the same array. An
+                indexing scheme for an MOC has a unique index for each
+                cell at each refinement level.
+
+                The nuniq scheme defines MOC indices such that all
+                cells within a particular refinement level form a set
+                of consecutive integers. E.g. for refinement level 0
+                the indices are 4, ..., 15, for refinement level 1 the
+                indices are 16, ..., 63, for refinement level 2 the
+                indices are 64, ..., 255, etc. When the indices are
+                sorted monotonically, the scheme is optimised for data
+                retrievals within a refinement level and within a
+                geographical range.
+
+                The zuniq scheme defines MOC indices such that, for
+                adjacent refinement levels, cells in the proximity of
+                a particular geographical location have similar index
+                values. This means that the indices for a particular
+                refinement level do not form a set of consecutive
+                integers. In fact the difference between the smallest
+                and largest indices within any given refinement level
+                is :math:`O(10^19)`. When the indices are sorted
+                monotonically, the scheme is optimised for data
+                retrievals across refinement levels.""",
     # dst_grid_partitions
     "{{dst_grid_partitions: `int` or `str`, optional}}": """dst_grid_partitions: `int` or `str`, optional
-            Calculating the weights matrix for grids with a very large
-            number of source and/or destination grid points can
-            potentially require more memory than is
-            available. However, the memory requirement can be greatly
-            reduced by calculating weights separately for
-            non-overlapping partitions of the destination grid, and
-            then combining the weights from each partition to create
-            the final weights matrix. The more partitions there are,
-            the smaller the memory requirement for the weights
-            calculations, at the expense of the weights calculations
-            taking longer.
+                Calculating the weights matrix for grids with a very
+                large number of source and/or destination grid points
+                can potentially require more memory than is
+                available. However, the memory requirement can be
+                greatly reduced by calculating weights separately for
+                non-overlapping partitions of the destination grid,
+                and then combining the weights from each partition to
+                create the final weights matrix. The more partitions
+                there are, the smaller the memory requirement for the
+                weights calculations, at the expense of the weights
+                calculations taking longer.
 
-            The *dst_grid_partitions* parameter sets the number of
-            destination grid partitions for the weights
-            calculations. The default value is ``1``, i.e. one
-            partition for the entire destination grid, maximising
-            memory usage and minimising the calculation time. If the
-            string ``'maximum'`` is given then the largest possible
-            number of partitions of the destination grid will be used,
-            minimising memory usage and maximising the calculation
-            time. A positive integer specifies the exact number of
-            partitions, capped by the maximum allowed, allowing the
-            balance between memory usage and calculation time to be
-            adjusted.
+                The *dst_grid_partitions* parameter sets the number of
+                destination grid partitions for the weights
+                calculations. The default value is ``1``, i.e. one
+                partition for the entire destination grid, maximising
+                memory usage and minimising the calculation time. If
+                the string ``'maximum'`` is given then the largest
+                possible number of partitions of the destination grid
+                will be used, minimising memory usage and maximising
+                the calculation time. A positive integer specifies the
+                exact number of partitions, capped by the maximum
+                allowed, allowing the balance between memory usage and
+                calculation time to be adjusted.
 
-            The actual number of destination grid partitions and each
-            partition's shape, and weights calculation time and memory
-            requirement are displayed when ``'DEBUG'`` logging is
-            activated. See *verbose* for details.
+                The actual number of destination grid partitions and
+                each partition's shape, and weights calculation time
+                and memory requirement are displayed when ``'DEBUG'``
+                logging is activated. See *verbose* for details.
 
-            .. note:: If setting *dst_grid_partitions* is required for
-                      the regridding to work, then it is worth
-                      considering storing the weights in a file for
-                      fast future access, via the *weights_file*
-                      parameter.""",
+                .. note:: If setting *dst_grid_partitions* is required
+                          for the regridding to work, then it is worth
+                          considering storing the weights in a file
+                          for fast future access, via the
+                          *weights_file* parameter.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

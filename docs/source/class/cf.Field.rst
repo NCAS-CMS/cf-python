@@ -386,6 +386,7 @@ Miscellaneous
    :template: method.rst
 
    ~cf.Field.copy
+   ~cf.Field.create_latlon_coordinates
    ~cf.Field.compute_vertical_coordinates
    ~cf.Field.dataset_compliance
    ~cf.Field.equals
@@ -471,6 +472,22 @@ Groups
    ~cf.Field.nc_set_group_attribute
    ~cf.Field.nc_set_group_attributes
 
+Mesh related
+^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.nc_del_mesh_variable
+   ~cf.Field.nc_get_mesh_variable
+   ~cf.Field.nc_has_mesh_variable
+   ~cf.Field.nc_set_mesh_variable
+   ~cf.Field.nc_clear_mesh_variable_groups
+   ~cf.Field.nc_mesh_variable_groups
+   ~cf.Field.nc_set_mesh_variable_groups
+
 Aggregation
 ^^^^^^^^^^^
 
@@ -524,6 +541,19 @@ Components
    ~cf.Field.nc_set_component_sample_dimension   
    ~cf.Field.nc_set_component_sample_dimension_groups
    ~cf.Field.nc_clear_component_sample_dimension_groups
+
+UGRID
+-----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.node_coordinates
+
 
 .. _field_methods:
 
@@ -727,6 +757,22 @@ Regridding operations
 
    ~cf.Field.regridc
    ~cf.Field.regrids
+   ~cf.Field.healpix_decrease_refinement_level
+   ~cf.Field.healpix_increase_refinement_level
+
+HEALPix grids
+-------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.healpix_info
+   ~cf.Field.healpix_change_indexing_scheme
+   ~cf.Field.healpix_to_ugrid
+   ~cf.Field.healpix_decrease_refinement_level
+   ~cf.Field.healpix_increase_refinement_level
 
 Date-time operations
 --------------------

@@ -498,7 +498,7 @@ class UMField:
             filename: `str`
                 The name of the PP/UM file.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             var: `umfile.Var`
 
@@ -578,7 +578,7 @@ class UMField:
                 ``'s3'``, ``'http'``). If `None` (the default) then a
                 local file system is assumed.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of
@@ -612,7 +612,7 @@ class UMField:
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             kwargs: *optional*
                 Keyword arguments providing extra CF properties for each
@@ -1386,7 +1386,7 @@ class UMField:
                 # Pseudolevels and atmosphere hybrid height
                 # coordinates are both present => can't reliably infer
                 # height. This is due to a current limitation in the C
-                # library that means it can ony create Z-T
+                # library that means it can only create Z-T
                 # aggregations, rather than the required Z-T-P
                 # aggregations.
                 toa_height = -1
@@ -3496,7 +3496,7 @@ class UMRead(cfdm.read_write.IORead):
                 ``'s3'``, ``'http'``). If `None` (the default) then a
                 local file system is assumed.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of
@@ -3530,7 +3530,7 @@ class UMRead(cfdm.read_write.IORead):
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
         :Returns:
 
@@ -3547,6 +3547,13 @@ class UMRead(cfdm.read_write.IORead):
             raise ValueError(
                 "Can't read Domain constructs from UM or PP datasets "
                 "(only Field constructs)"
+            )
+
+        representation = self.dataset_representation(dataset)
+        if representation != "path":
+            raise NotImplementedError(
+                "Can't yet read Field constructs from a UM or PP "
+                f"{representation!r} dataset: {dataset!r}"
             )
 
         if not _stash2standard_name:
@@ -3605,75 +3612,17 @@ class UMRead(cfdm.read_write.IORead):
                 # Return now if there are valid file types
                 return []
 
-        # Parse the 'storage_options' keyword parameter
-        if storage_options is None:
-            storage_options = {}
-        elif filesystem is not None:
-            raise ValueError(
-                "Can't set both storage_options and filesystem keywords"
+        if storage_options is not None:
+            raise NotImplementedError(
+                "Can't yet open PP/UM files with file system storage options"
+            )
+
+        if filesystem is not None:
+            raise NotImplementedError(
+                "Can't yet open PP/UM files from a pre-defined file system"
             )
 
         storage_protocol = None
-
-        if filesystem is not None:
-            # --------------------------------------------------------
-            # A pre-authenticated filesystem was provided: open the
-            # dataset as a file-like object and pass it to the backend.
-            # --------------------------------------------------------
-            raise NotImplementedError(
-                "Can't yet open PP/UM files from a remote file system"
-            )
-
-            try:
-                dataset = filesystem.open(dataset, "rb")
-            except AttributeError:
-                raise AttributeError(
-                    f"The 'filesystem' object {filesystem!r} does not have "
-                    "an 'open' method. Please provide a valid filesystem "
-                    "object (e.g. an fsspec filesystem instance)."
-                )
-            except Exception as exc:
-                raise OSError(
-                    f"Failed to open {dataset!r} using the provided "
-                    f"'filesystem' object {filesystem!r}: {exc}"
-                ) from exc
-
-        else:
-            from uritools import urisplit
-
-            u = urisplit(dataset)
-            if u.scheme == "s3":
-                # ----------------------------------------------------
-                # Dataset is an s3://... string.
-                # ----------------------------------------------------
-                raise NotImplementedError(
-                    "Can't yet open PP/UM files from an s3 object store"
-                )
-
-                import fsspec
-
-                client_kwargs = storage_options.get("client_kwargs", {})
-                if (
-                    "endpoint_url" not in storage_options
-                    and "endpoint_url" not in client_kwargs
-                ):
-                    authority = u.authority
-                    if not authority:
-                        authority = ""
-
-                    storage_options["endpoint_url"] = f"https://{authority}"
-
-                filesystem = fsspec.filesystem(
-                    protocol=u.scheme, **storage_options
-                )
-                dataset = filesystem.open(u.path[1:], "rb")
-
-        if not storage_options:
-            storage_options = None
-
-        if filesystem is not None:
-            storage_protocol = filesystem.protocol
-            storage_options = filesystem.storage_options
 
         f = self.dataset_open(dataset, parse=True)
 
@@ -3834,6 +3783,41 @@ class UMRead(cfdm.read_write.IORead):
             fmt=g.get("fmt"),
             parse=parse,
         )
+
+    @classmethod
+    def dataset_representation(cls, dataset):
+        """Return the logical representation type of the input dataset.
+
+        .. versionadded:: 3.20.0
+
+        :Parameters:
+
+            dataset:
+                The dataset. May be a string-valued path or a
+                file-like object.
+
+        :Returns:
+
+            `str`
+                The dataset representation:
+
+                * ``'path'``: A string-valued path.
+
+                * ``'file_handle'``: An open file handle (such as
+                  returned by `fsspec.filesystem.open`)
+
+                * ``'unknown'``: Anything else.
+
+        """
+        # Strings (Paths)
+        if isinstance(dataset, str):
+            return "path"
+
+        # Check for a "binary stream" (file handle)
+        if hasattr(dataset, "read") and hasattr(dataset, "seek"):
+            return "file_handle"
+
+        return "unknown"
 
 
 """

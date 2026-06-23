@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="_static/documentation_options.js?v=cf9ada82"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.20.0</a></h1>
 
 
 
@@ -122,7 +122,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="installation">
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.19.0 for version 1.13 of the CF conventions.</p>
+<p>Version 3.20.0 for version 1.13 of the CF conventions.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#operating-systems" id="id21"><strong>Operating systems</strong></a></p></li>
@@ -300,11 +300,12 @@ files</span></a>, and</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/distributed">distributed</a>, version 2025.5.1 or
 newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/netcdf4/">netCDF4</a>, version 1.7.2 only.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/pyfive">pyfive</a>, version 1.1.1 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.6.4 or newer
 (note that this package may be installed with netCDF4).</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/scipy">scipy</a>, version 1.10.0 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.13.0.0 or up to,
-but not including, 1.13.1.0.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.13.1.0 or up to,
+but not including, 1.13.2.0.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.3.7 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/psutil/">psutil</a>, version 0.6.0 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/packaging/">packaging</a>, version 20.0 or newer.</p></li>
@@ -342,9 +343,8 @@ environments for which these features are not required.</p>
 </ul>
 <p class="rubric">Regridding</p>
 <ul>
-<li><p><a class="reference external" href="https://earthsystemmodeling.org/esmpy/">esmpy</a>, previously
-named <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> with the old module name also being accepted for import,
-version 8.7.0 or newer. This is easily installed via conda with</p>
+<li><p><a class="reference external" href="https://earthsystemmodeling.org/esmpy/">esmpy</a>, version 8.7.0 or
+newer. This can be installed via conda with</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="s2">&quot;esmpy&gt;=8.7.0&quot;</span>
 </pre></div>
 </div>
@@ -363,6 +363,15 @@ or newer.</p></li>
 library is not yet in PyPi (it will be soon), so in the interim you
 must use a copy of the <code class="docutils literal notranslate"><span class="pre">pyfive</span></code> branch of the
 <a class="reference external" href="https://github.com/NCAS-CMS/PyActiveStorage">https://github.com/NCAS-CMS/PyActiveStorage</a> repository.</p></li>
+</ul>
+<p class="rubric">HEALPix manipulations</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pypi.org/project/healpix">healpix</a>, version 2025.1 or
+newer. This package is not required to read and write HEALPix
+datasets, but is needed for particular manipulations with
+HEALPix grids, such as creating latitude and longitude coordinates,
+regridding, some changes to the refinement level, and some
+collapses.</p></li>
 </ul>
 <hr class="docutils" />
 </section>
@@ -390,7 +399,7 @@ must use a copy of the <code class="docutils literal notranslate"><span class="p
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

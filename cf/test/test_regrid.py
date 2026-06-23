@@ -11,6 +11,12 @@ import numpy as np
 
 import cf
 
+esmpy_imported = True
+try:
+    import esmpy  # noqa: F401
+except ImportError:
+    esmpy_imported = False
+
 n_tmpfiles = 1
 tmpfiles = [
     tempfile.mkstemp("_test_regrid.nc", dir=os.getcwd())[1]
@@ -29,14 +35,6 @@ def _remove_tmpfiles():
 
 
 atexit.register(_remove_tmpfiles)
-
-
-esmpy_imported = True
-try:
-    import esmpy  # noqa: F401
-except ImportError:
-    esmpy_imported = False
-
 
 all_methods = (
     "linear",
@@ -140,19 +138,27 @@ def esmpy_regrid_Nd(coord_sys, method, src, dst, **kwargs):
 
 
 class RegridTest(unittest.TestCase):
-    # Get the test source and destination fields
-    filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
-    )
-    dst_src = cf.read(filename)
-    dst = dst_src[0]
-    src = dst_src[1]
 
-    filename_xyz = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_xyz.nc"
-    )
+    def setUp(self):
+        """Preparations called immediately before each test method."""
+        # Skip all if esmpy module not available!
+        if not esmpy_imported:
+            self.skipTest(
+                "Test module requires 'esmpy' package. Install it to run all."
+            )
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+        # Get the test source and destination fields
+        filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
+        )
+        dst_src = cf.read(filename)
+        self.dst = dst_src[0]
+        self.src = dst_src[1]
+
+        self.filename_xyz = os.path.join(  # noqa: F841
+            os.path.dirname(os.path.abspath(__file__)), "regrid_xyz.nc"
+        )
+
     def test_Field_regrid_2d_field(self):
         """2-d regridding with Field destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -304,7 +310,6 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regrids(dst, method=method).array
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_coords(self):
         """Spherical regridding with coords destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -374,7 +379,6 @@ class RegridTest(unittest.TestCase):
         d1 = src.regrids(r)
         self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_2d_coords(self):
         """2-d Cartesian regridding with coords destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -418,7 +422,6 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.src.regrids("foobar", method="conservative")
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_domain(self):
         """Spherical regridding with Domain destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -442,7 +445,6 @@ class RegridTest(unittest.TestCase):
         d1 = src.regrids(r)
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_domain(self):
         """Spherical regridding with Domain destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -468,7 +470,6 @@ class RegridTest(unittest.TestCase):
         d1 = src.regridc(r)
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_field_operator(self):
         """Spherical regridding with operator destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -506,7 +507,6 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             dst.regrids(r)
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_non_coordinates(self):
         """Check setting of non-coordinate metadata."""
         self.assertFalse(cf.regrid_logging())
@@ -555,7 +555,6 @@ class RegridTest(unittest.TestCase):
         # Cell measures
         self.assertFalse(d1.cell_measures())
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_3d_field(self):
         """3-d Cartesian regridding with Field destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -627,7 +626,7 @@ class RegridTest(unittest.TestCase):
                 #    # effectively) 1-d regridding
                 #    continue
 
-                if method in ("nearest_dtos"):
+                if method in ("nearest_dtos",):
                     continue
 
                 x = src.regridc(
@@ -659,7 +658,6 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regridc(dst, method=method, axes=axes)
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_1d_field(self):
         """1-d Cartesian regridding with Field destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -750,7 +748,6 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regridc(dst, method=method, axes=axes)
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_1d_coordinates_z(self):
         """1-d Z Cartesian regridding with coordinates destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -763,7 +760,6 @@ class RegridTest(unittest.TestCase):
         z = d.dimension_coordinate("Z")
         self.assertTrue(z.data.equals(dst.data))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_chunks(self):
         """Regridding of chunked axes"""
         self.assertFalse(cf.regrid_logging())
@@ -780,7 +776,6 @@ class RegridTest(unittest.TestCase):
         d0 = src.regrids(dst, method="linear")
         self.assertEqual(d0.data.numblocks, (1, 1, 1))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_weights_file(self):
         """Regridding creation/use of weights file"""
         self.assertFalse(cf.regrid_logging())
@@ -793,26 +788,29 @@ class RegridTest(unittest.TestCase):
         except OSError:
             pass
 
-        r = src.regrids(
+        r0 = src.regrids(
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
         self.assertTrue(os.path.isfile(tmpfile))
-        self.assertEqual(r.weights_file, tmpfile)
-        self.assertIsNone(r.weights)
+        self.assertEqual(r0.weights_file, tmpfile)
+        self.assertIsNone(r0.weights)
 
-        r = src.regrids(
+        r1 = src.regrids(
             dst, method="linear", return_operator=True, weights_file=tmpfile
         )
-        self.assertEqual(r.weights_file, tmpfile)
-        self.assertIsNone(r.weights)
+        self.assertEqual(r1.weights_file, tmpfile)
+        self.assertIsNone(r1.weights)
+
+        r0.tosparse()
+        r1.tosparse()
+        self.assertTrue((r1.weights - r0.weights).nnz == 0)
 
         # Can't provide weights_file when dst is a RegridOperator
         with self.assertRaises(ValueError):
             self.assertEqual(
-                src.regrids(r, method="linear", weights_file=tmpfile)
+                src.regrids(r1, method="linear", weights_file=tmpfile)
             )
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_return_esmpy_regrid_operator(self):
         """esmpy regrid operator returns esmpy.Regrid in regrids and regridc"""
         self.assertFalse(cf.regrid_logging())
@@ -832,6 +830,208 @@ class RegridTest(unittest.TestCase):
 
         self.assertIsInstance(opers, esmpy.api.regrid.Regrid)
         self.assertIsInstance(operc, esmpy.api.regrid.Regrid)
+
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_regrids_mtol(self):
+        """Test mtol keyword to regrids."""
+        self.assertFalse(cf.regrid_logging())
+
+        # Source grid
+        s = cf.example_field(0)
+
+        # Destination grid
+        d = s[1:, :]
+        x = d.dimension_coordinate("X")
+        y = d.dimension_coordinate("Y")
+        x.del_bounds()
+        y.del_bounds()
+        x[...] = [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0]
+        y[...] = [-60.0, -22.5, 22.5, 60.0]
+
+        # No missing values
+        x = s.regrids(d, method="linear")
+        self.assertEqual(x.data.count().array, 32)
+
+        # Create some masked source cells
+        for i in range(5):
+            s[i, i:] = cf.masked
+
+        self.assertTrue(
+            np.array_equal(
+                s.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [False, True, True, True, True, True, True, True],
+                    [False, False, True, True, True, True, True, True],
+                    [False, False, False, True, True, True, True, True],
+                    [False, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        for n in (0, 0.24):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.25, 0.49):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.5, 0.74):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [False, False, True, True, True, True, True, True],
+                        [False, False, False, True, True, True, True, True],
+                        [False, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.75, 0.99, 1):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [False, False, True, True, True, True, True, True],
+                        [False, False, False, True, True, True, True, True],
+                        [False, False, False, False, True, True, True, True],
+                        [False, False, False, False, False, True, True, True],
+                    ],
+                )
+            )
+
+        # Check bad values of mtol
+        for n in (-1, 3.14):
+            with self.assertRaises(ValueError):
+                x = s.regrids(d, method="linear", mtol=n)
+
+    def test_regridc_mtol(self):
+        """Test mtol keyword to regridc."""
+        self.assertFalse(cf.regrid_logging())
+
+        # Source grid
+        s = cf.example_field(0)
+
+        # Destination grid
+        d = s[1:, :]
+        x = d.dimension_coordinate("X")
+        y = d.dimension_coordinate("Y")
+        x.del_bounds()
+        y.del_bounds()
+        x[...] = [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0]
+        y[...] = [-60.0, -22.5, 22.5, 60.0]
+
+        # No missing values
+        x = s.regrids(d, method="linear")
+        self.assertEqual(x.data.count().array, 32)
+
+        # Create some masked source cells
+        for i in range(5):
+            s[i, i:] = cf.masked
+
+        self.assertTrue(
+            np.array_equal(
+                s.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [False, True, True, True, True, True, True, True],
+                    [False, False, True, True, True, True, True, True],
+                    [False, False, False, True, True, True, True, True],
+                    [False, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        axes = ["Y", "X"]
+
+        for n in (0, 0.24):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.25, 0.49):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.5, 0.74):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.75, 1):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                        [True, False, False, False, False, True, True, True],
+                    ],
+                )
+            )
 
 
 if __name__ == "__main__":

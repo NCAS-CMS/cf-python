@@ -1,7 +1,7 @@
 Version NEXTVERSION
 --------------
 
-**2026-??-??**
+**2026-06-??**
 
 * New methods to convert to `xarray`: `cf.Field.to_xarray`,
   `cf.FieldList.to_xarray`, `cf.Domain.to_xarray`, and
@@ -10,6 +10,43 @@ Version NEXTVERSION
 * New output format for `cf.write` that creates an `xarray` dataset in
   memory: ``'XARRAY'``
   (https://github.com/NCAS-CMS/cf-python/issues/933)
+* New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
+  ``mtol`` (https://github.com/NCAS-CMS/cf-python/issues/949)
+* Fix bug in `cf.read` that prevented some OPeNDAP URLS being read
+  (https://github.com/NCAS-CMS/cf-python/issues/948)
+* Fix bug that caused weighted `cf.collapse` and `cf.weights` to fail
+  when a cell meausures has a size 1 axis
+  (https://github.com/NCAS-CMS/cf-python/issues/952)
+* New optional dependency: ``xarray>=2026.2.0``
+
+----
+
+Version 3.20.0
+--------------
+
+**2026-04-10**
+
+* Read Kerchunk datasets with `cf.read`
+  (https://github.com/NCAS-CMS/cf-python/issues/936)
+* Read open file handle datasets with `cf.read`
+  (https://github.com/NCAS-CMS/cf-python/issues/937)
+* Write UGRID datasets with `cf.write`
+  (https://github.com/NCAS-CMS/cf-python/issues/697)
+* Support for HEALPix grids
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
+* New HEALPix methods: `cf.Field.healpix_info`,
+  `cf.Field.healpix_decrease_refinement_level`,
+  `cf.Field.healpix_increase_refinement_level`,
+  `cf.Field.healpix_change_indexing_scheme`,
+  `cf.Field.healpix_to_ugrid`, `cf.Domain.create_healpix`
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
+* New method: `cf.Field.create_latlon_coordinates`
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
+* New method: `cf.Data.coarsen`
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
+* New functions: `cf.locate`, `cf.healpix_max_refinement_level`,
+  `cf.healpix_indexing_schemes`
+  (https://github.com/NCAS-CMS/cf-python/issues/909)
 * New keyword to `cf.read`: ``filesystem``
   (https://github.com/NCAS-CMS/cf-python/issues/931)
 * New keyword parameter to `cf.Data.compute`: ``persist``
@@ -31,7 +68,8 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/issues/391)
 * Fix for subspacing with cyclic `cf.wi` and `cf.wo` arguments
   (https://github.com/NCAS-CMS/cf-python/issues/887)
-* New optional dependency: ``xarray>=2026.2.0``
+* New optional dependency: ``healpix>=2025.1``
+* New dependency: ``pyfive>=1.1.1``
 * Changed dependency: ``cfdm>=1.13.1.0, <1.13.2.0``
 
 ----
@@ -91,8 +129,8 @@ Version 3.18.1
 * Allow multiple conditions for the same axis in `cf.Field.subspace`
   and `cf.Field.indices`
   (https://github.com/NCAS-CMS/cf-python/issues/881)
-* Fix bug in `cf.Field.collapse` that causes a ``ValueError`` to be raised
-  for missing external cell measures data
+* Fix bug in `cf.Field.collapse` that causes a ``ValueError`` to be
+  raised for missing external cell measures data
   (https://github.com/NCAS-CMS/cf-python/issues/885)
 * New dependency: ``distributed>=2025.5.1``
 * Changed dependency: ``cfdm>=1.12.3.0, <1.12.4.0``

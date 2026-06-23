@@ -1,6 +1,6 @@
-"""Functions intended to be passed to be dask.
+"""Functions intended to be passed to be Dask.
 
-These will typically be functions that operate on dask chunks. For
+These will typically be functions that operate on Dask chunks. For
 instance, as would be passed to `dask.array.map_blocks`.
 
 """
@@ -62,7 +62,7 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
 
         origin: `int`, optional
             Controls the placement of the filter on the input array’s
-            pixels. A value of 0 (the default) centers the filter over
+            pixels. A value of 0 (the default) centres the filter over
             the pixel, with positive values shifting the filter to the
             left, and negative ones to the right.
 
@@ -165,7 +165,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     if np.ma.isMA(a):
         # ------------------------------------------------------------
         # Input array is masked: Replace missing values with NaNs and
-        # remask later.
+        # re-mask later.
         # ------------------------------------------------------------
         if a.dtype != float:
             # Can't assign NaNs to integer arrays

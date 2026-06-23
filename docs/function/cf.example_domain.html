@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.example_domain<a class="headerlink" href="#cf-example-domain" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cf.example_domain">
-<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">example_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_func=&lt;function</span> <span class="pre">example_field&gt;</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.19.0/cf/examplefield.py#L29-L30"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.example_domain" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">example_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_func=&lt;function</span> <span class="pre">example_field&gt;</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.20.0/cf/examplefield.py#L29-L30"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.example_domain" title="Link to this definition">¶</a></dt>
 <dd><p>Return an example domain construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
@@ -192,6 +192,15 @@ constructs.</p></td>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">11</span></code></p></td>
 <td><p>Discrete sampling geometry (DSG) “trajectory”
 features.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">12</span></code></p></td>
+<td><p>A global HEALPix grid with “nested” indexing
+scheme at refinement level 1.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">13</span></code></p></td>
+<td><p>A global HEALPix Multi-Order Coverage grid with
+“nuniq” indexing scheme representing refinement
+levels 1 and 2.</p></td>
 </tr>
 </tbody>
 </table>
@@ -325,6 +334,20 @@ the domain construct is derived.</p>
 <span class="go">                : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]</span>
 </pre></div>
 </div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">example_domain</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+<span class="go">Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian</span>
+<span class="go">                : height(1) = [1.5] m</span>
+<span class="go">                : healpix_index(healpix_index(48)) = [0, ..., 47]</span>
+<span class="go">Coord references: grid_mapping_name:healpix</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">example_domain</span><span class="p">(</span><span class="mi">13</span><span class="p">))</span>
+<span class="go">Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian</span>
+<span class="go">                : height(1) = [1.5] m</span>
+<span class="go">Auxiliary coords: healpix_index(healpix_index(60)) = [64, ..., 63]</span>
+<span class="go">Coord references: grid_mapping_name:healpix</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -337,7 +360,7 @@ the domain construct is derived.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

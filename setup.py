@@ -178,7 +178,10 @@ are partially conformant may nonetheless be modified in memory.
 
 The ``cf`` package can:
 
-* read field and domain constructs from netCDF, CDL, Zarr, UM fields file, and PP datasets with a choice of netCDF backends,
+* read field constructs and domain constructs from netCDF, CDL,
+  Zarr, Kerchunk, PP and UM datasets with a choice of netCDF
+  backends,
+* read files from OPeNDAP servers and S3 object stores,
 * be fully flexible with respect to dataset storage chunking,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF and Zarr v3 datasets on disk, with control over HDF5 internal file metadata,
@@ -206,11 +209,13 @@ The ``cf`` package can:
 * combine field constructs arithmetically,
 * manipulate field construct data by arithmetical and trigonometrical
   operations,
-* perform statistical collapses on field constructs,
+* perform weighted statistical collapses on field constructs,
+  including those with geometry cells, UGRID mesh topologies, and
+  HEALPix grids,
 * perform histogram, percentile and binning operations on field
   constructs,
-* regrid structured grid, mesh and DSG field constructs with
-  (multi-)linear, nearest neighbour, first- and second-order
+* regrid structured grid, UGRID, HEALPix, and DSG field constructs
+  with (multi-)linear, nearest neighbour, first- and second-order
   conservative and higher order patch recovery methods, including 3-d
   regridding, and large-grid support,
 * apply convolution filters to field constructs,

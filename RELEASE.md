@@ -27,10 +27,14 @@
   are up-to-date and consistent in both the `requirements.txt` and in
   `docs/source/installation.rst` (paying particular attention to
   `cfdm`); and in the cfdm-only `Version` checks in `cf/__init__.py`.
+  Cross-reference these with any dependency changes stated in
+  the Changelog, too, to confirm they are consistent.
 
 - [ ] Make sure that `README.md` is up to date.
 
-- [ ] Make sure that the `long_description` in `setup.py` is up to date.
+- [ ] Make sure that the `long_description` in `setup.py` is up to date
+      and consistent with the descriptions in the `README.md`, the
+      `__init__.py` and the `docs/source/installation.rst` page.
 
 - [ ] Make sure that `Changelog.rst` is up to date (cf version,
       cfdm dependency, date and changes).

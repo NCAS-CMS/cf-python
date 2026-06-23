@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=b14d8abf"></script>
+    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.19.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
 
 
 
@@ -129,52 +129,31 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.H5netcdfArray.get_storage_options<a class="headerlink" href="#cf-h5netcdfarray-get-storage-options" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.H5netcdfArray.get_storage_options">
-<span class="sig-prename descclassname"><span class="pre">H5netcdfArray.</span></span><span class="sig-name descname"><span class="pre">get_storage_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_endpoint_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parsed_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/data/abstract/filearray.py#L350-L438"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.H5netcdfArray.get_storage_options" title="Link to this definition">¶</a></dt>
-<dd><p>Return <code class="xref py py-obj docutils literal notranslate"><span class="pre">s3fs.S3FileSystem</span></code> options for accessing S3 files.</p>
+<span class="sig-prename descclassname"><span class="pre">H5netcdfArray.</span></span><span class="sig-name descname"><span class="pre">get_storage_options</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/data/abstract/filearray.py#L412-L451"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.H5netcdfArray.get_storage_options" title="Link to this definition">¶</a></dt>
+<dd><p>Return the file system options.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt>create_endpoint_url: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then create an
-<code class="docutils literal notranslate"><span class="pre">'endpoint_url'</span></code> option if and only if one was not
-set during object initialisation. In this case the
-<code class="docutils literal notranslate"><span class="pre">'endpoint_url'</span></code> will be set from the file name
-returned by <a class="reference internal" href="cf.H5netcdfArray.get_filename.html#cf.H5netcdfArray.get_filename" title="cf.H5netcdfArray.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>, unless either of the
-<em>filename</em> or <em>parsed_filename</em> parameters is also
-set.</p>
+<dt>create_endpoint_url: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Removed at version 1.13.1.0</p>
 </dd>
-<dt>filename: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Used to set the <code class="docutils literal notranslate"><span class="pre">'endpoint_url'</span></code> if it was not
-set during object initialisation and
-<em>create_endpoint_url</em> is True. Ignored if the
-<em>parsed_filename</em> parameter has been set.</p>
+<dt>filename: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Removed at version 1.13.1.0</p>
 </dd>
-<dt>parsed_filename: <a class="reference external" href="https://docs.python.org/3/library/urllib.parse.html#urllib.parse.ParseResult" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">urllib.parse.ParseResult</span></code></a>, optional</dt><dd><p>Used to set the <code class="docutils literal notranslate"><span class="pre">'endpoint_url'</span></code> if it was not
-set during object initialisation and
-<em>create_endpoint_url</em> is True. Ignored if the
-<em>filename</em> parameter has been set.</p>
+<dt>parsed_filename: <a class="reference external" href="https://docs.python.org/3/library/urllib.parse.html#urllib.parse.ParseResult" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">urllib.parse.ParseResult</span></code></a>, optional</dt><dd><p>Removed at version 1.13.1.0</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">s3fs.S3FileSystem</span></code> options.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The storage options.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_filename</span><span class="p">()</span>
-<span class="go">&#39;s3://store/data/file.nc&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_storage_options</span><span class="p">(</span><span class="n">create_endpoint_url</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">{}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_storage_options</span><span class="p">()</span>
-<span class="go">{&#39;endpoint_url&#39;: &#39;https://store&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_storage_options</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;s3://other-store/data/file.nc&#39;</span><span class="p">)</span>
-<span class="go">{&#39;endpoint_url&#39;: &#39;https://other-store&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_storage_options</span><span class="p">(</span><span class="n">create_endpoint_url</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="gp">... </span>                      <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;s3://other-store/data/file.nc&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_storage_options</span><span class="p">()</span>
 <span class="go">{}</span>
 </pre></div>
 </div>
@@ -197,7 +176,7 @@ set during object initialisation and
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-19.
+      &#169;2026, NCAS | Page built on 2026-04-10.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

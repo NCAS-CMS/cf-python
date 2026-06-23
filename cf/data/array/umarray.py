@@ -74,11 +74,11 @@ class UMArray(
 
             {{init storage_protocol: `None` or `str`, optional}}
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.0
 
             {{init source: optional}}
 

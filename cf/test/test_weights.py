@@ -1,9 +1,16 @@
 import datetime
 import unittest
+from importlib.util import find_spec
 
 import numpy as np
 
 import cf
+
+healpix_available = False
+# Note: here only need healpix for cf under-the-hood code, not in test
+# directly, so no need to actually import healpix, just test it is there.
+if find_spec("healpix"):
+    healpix_available = True
 
 # A radius greater than 1. Used since weights based on the unit
 # sphere and non-spheres are tested separately.
@@ -152,6 +159,7 @@ class WeightsTest(unittest.TestCase):
         self.assertTrue((w.array == correct_weights).all())
         self.assertEqual(w.Units, cf.Units("m2"))
 
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
     def test_weights_polygon_area_ugrid(self):
         f = cf.example_field(8)
         f = f[..., [0, 2]]
@@ -216,6 +224,15 @@ class WeightsTest(unittest.TestCase):
         w = f.weights("area", measure=True)
         self.assertTrue((w.array == correct_weights).all())
         self.assertEqual(w.Units, cf.Units("m2"))
+
+        # For a UGRID derived from a global HEALPix grid, check that
+        # the global sum of cell areas is correct
+        u = cf.example_field(12).healpix_to_ugrid()
+        u_weights = u.weights(
+            measure=True, components=True, great_circle=True
+        )[(1,)]
+        global_area = 4 * np.pi * (u.radius() ** 2)
+        self.assertTrue(np.allclose(u_weights.sum(), global_area))
 
     def test_weights_line_length_geometry(self):
         # Spherical line geometry
@@ -335,6 +352,24 @@ class WeightsTest(unittest.TestCase):
             ValueError, "Can't create weights: Unable to find cell areas"
         ):
             f.weights("area")
+
+    @unittest.skipUnless(healpix_available, "Requires 'healpix' package.")
+    def test_weights_healpix(self):
+        """Test HEALPix weights."""
+        # HEALPix grid with Multi-Order Coverage (a combination of
+        # refinement level 1 and 2 cells)
+        f = cf.example_field(13)
+
+        w = f.weights(components=True)[(1,)].array
+        self.assertTrue(np.allclose(w[:16], 1 / (4**2)))
+        self.assertTrue(np.allclose(w[16:], 1 / (4**1)))
+
+        w = f.weights(measure=True, components=True)[(1,)].array
+        x = 4 * np.pi * (f.radius() ** 2) / 12
+        self.assertTrue(np.allclose(w[:16], x / (4**2)))
+        self.assertTrue(np.allclose(w[16:], x / (4**1)))
+        # Total global area
+        self.assertTrue(np.allclose(w.sum(), x * 12))
 
 
 if __name__ == "__main__":

@@ -11,18 +11,23 @@ nonetheless be modified in memory.
 The `cf` package uses `dask` for all of its array manipulation and
 can:
 
-* read field constructs from netCDF, CDL, Zarr, PP and UM datasets,
-
-* read field constructs and domain constructs from netCDF, CDL, PP and
-  UM datasets with a choice of netCDF backends,
+* read field constructs and domain constructs from netCDF, CDL,
+  Zarr, Kerchunk, PP and UM datasets with a choice of netCDF
+  backends,
 
 * read files from OPeNDAP servers and S3 object stores,
 
+* be fully flexible with respect to dataset storage chunking,
+
 * create new field constructs in memory,
 
-* write and append field constructs to netCDF datasets on disk,
+* write and append field and domain constructs to netCDF and
+  Zarr v3 datasets on disk, with control over HDF5 internal
+  file metadata,
 
 * read, write, and manipulate UGRID mesh topologies,
+
+* read, write, and manipulate HEALPix grids,
 
 * read, write, and create coordinates defined by geometry cells,
 
@@ -50,14 +55,17 @@ can:
 * manipulate field construct data by arithmetical and trigonometrical
   operations,
 
-* perform statistical collapses on field constructs,
+* perform weighted statistical collapses on field constructs,
+  including those with geometry cells, UGRID mesh topologies, and
+  HEALPix grids,
 
 * perform histogram, percentile and binning operations on field
   constructs,
 
-* regrid field constructs with (multi-)linear, nearest neighbour,
-  first- and second-order conservative and higher order patch recovery
-  methods,
+* regrid structured grid, UGRID, HEALPix, and DSG field constructs
+  with (multi-)linear, nearest neighbour, first- and second-order
+  conservative and higher order patch recovery methods, including 3-d
+  regridding, and large-grid support,
 
 * apply convolution filters to field constructs,
 
@@ -65,7 +73,10 @@ can:
 
 * apply differential operators to field constructs,
 
-* create derived quantities (such as relative vorticity).
+* create derived quantities (such as relative vorticity),
+
+* read and write data that are quantized to eliminate false
+  precision.
 
 
 **Visualisation**
@@ -85,16 +96,16 @@ import cfdm
 from packaging.version import Version
 
 
-__date__ = "2026-01-19"
-__version__ = "3.19.0"
+__date__ = "2026-04-10"
+__version__ = "3.20.0"
 __cf_version__ = cfdm.__cf_version__
 __Conventions__ = f"CF-{__cf_version__}"
 
 # Check the version of cfdm (this is worth doing because of the very
 # tight coupling between cf and cfdm, and the risk of bad things
 # happening at run time if the versions are mismatched).
-_minimum_vn = "1.13.0.0"
-_maximum_vn = "1.13.1.0"
+_minimum_vn = "1.13.1.0"
+_maximum_vn = "1.13.2.0"
 _cfdm_vn = Version(cfdm.__version__)
 if _cfdm_vn < Version(_minimum_vn) or _cfdm_vn >= Version(_maximum_vn):
     raise RuntimeError(
@@ -119,7 +130,6 @@ from .quantization import Quantization
 from .tiepointindex import TiePointIndex
 
 from .bounds import Bounds
-from .domain import Domain
 from .datum import Datum
 from .coordinateconversion import CoordinateConversion
 
@@ -138,6 +148,7 @@ from .coordinatereference import CoordinateReference
 from .cellconnectivity import CellConnectivity
 from .cellmethod import CellMethod
 from .cellmeasure import CellMeasure
+from .domain import Domain
 from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
 from .domaintopology import DomainTopology

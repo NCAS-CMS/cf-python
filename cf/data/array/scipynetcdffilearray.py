@@ -9,6 +9,6 @@ class ScipyNetcdfFileArray(
 ):
     """A netCDF-3 array accessed with `scipy.io.netcdf_file`.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 3.20.0
 
     """
