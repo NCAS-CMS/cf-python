@@ -4,7 +4,12 @@ Version NEXTVERSION
 **2026-06-??**
 
 * New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
-  ``max_masked`` (https://github.com/NCAS-CMS/cf-python/issues/949)
+  ``mtol`` (https://github.com/NCAS-CMS/cf-python/issues/949)
+* Fix bug in `cf.read` that prevented some OPeNDAP URLS being read
+  (https://github.com/NCAS-CMS/cf-python/issues/948)
+* Fix bug that caused weighted `cf.collapse` and `cf.weights` to fail
+  when a cell meausures has a size 1 axis
+  (https://github.com/NCAS-CMS/cf-python/issues/952)
 
 ----
 
