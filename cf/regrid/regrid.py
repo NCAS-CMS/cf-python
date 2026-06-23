@@ -148,6 +148,7 @@ def regrid(
     return_operator=False,
     check_coordinates=False,
     min_weight=None,
+    mtol=0,
     weights_file=None,
     return_esmpy_regrid_operator=False,
     dst_grid_partitions=1,
@@ -261,6 +262,70 @@ def regrid(
             performed (checking that the coordinate system, cyclicity
             and grid shape are the same).
 
+        min_weight: float, optional
+            A very small non-negative number. By default *min_weight*
+            is ``2.5 * np.finfo("float64").eps``,
+            i.e. ``5.551115123125783e-16`. It is used during linear
+            and first-order conservative regridding when adjusting the
+            weights matrix to account for the data mask. It is ignored
+            for all other regrid methods, or if data being regridded
+            has no missing values.
+
+            In some cases (described below) for which weights might
+            only be non-zero as a result of rounding errors, the
+            *min_weight* parameter controls whether or a not cell in
+            the regridded field is masked.
+
+            The default value has been chosen empirically as the
+            smallest value that produces the same masks as esmpy for
+            the use cases defined in the cf test suite.
+
+            **Linear regridding**
+
+            Destination grid cell ``j`` will only be masked if a) it
+            is masked in the destination grid definition; or b) the
+            fraction of those masked source grid cells ``i`` for which
+            ``w_ji > min_weight`` exceeds the *mtol* parameter.
+
+            **Conservative first-order regridding**
+
+            Destination grid cell j will only be masked if a) it is
+            masked in the destination grid definition; or b) the sum
+            of ``w_ji`` for all non-masked source grid cells i is
+            strictly less than *min_weight*.
+
+        mtol: number, optional
+            For linear regridding only. Ignored for all other
+            regridding methods.
+
+            The fraction, in the range ``[0, 1]``, of masked source
+            cells which are allowed to be ignored when calculating a
+            non-masked destination cell. When masked source cells are
+            ignored, the weights of the non-masked source cells are
+            adjusted so that they sum to 1.
+
+            Define ``w_ji`` as the multiplicative weight that defines
+            how much of ``Vs_i`` (the value in source grid cell ``i``)
+            contributes to ``Vd_j`` (the value in destination grid
+            cell ``j``).
+
+            A destination grid cell j will be masked if *mtol*
+            multiplied by the total number of source cells i for which
+            ``w_ji >= min_weight`` is greater than the number of those
+            source grid cells which are masked.
+
+            By default *mtol* is ``0``, meaning that destination grid
+            cell j will be masked if any source cell i for which
+            ``w_ji >= min_weight`` is masked.
+
+            For instance, for a rectilinear source grid for which up
+            to 4 source grid cells contribute to each destination grid
+            cell, if *mtol* is in the range ``[0.5, 0.75)`` then a
+            destination grid cell will in general only be masked if
+            three or more of its source grid cells are masked.
+
+            .. versionadded:: NEXTVERSION
+
         inplace: `bool`, optional
             If True then modify *src* in-place and return `None`.
 
@@ -346,6 +411,12 @@ def regrid(
 
     """
     debug = is_log_level_debug(logger)
+
+    if mtol < 0 or mtol > 1:
+        raise ValueError(
+            "The mtol keyword must be a nunber in the range [0, 1]. "
+            f"Got: {mtol!r}"
+        )
 
     if not inplace:
         src = src.copy()
@@ -774,6 +845,7 @@ def regrid(
         regrid_axes=src_grid.axis_indices,
         regridded_sizes=regridded_axis_sizes,
         min_weight=min_weight,
+        mtol=mtol,
     )
 
     # ----------------------------------------------------------------

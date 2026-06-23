@@ -831,6 +831,208 @@ class RegridTest(unittest.TestCase):
         self.assertIsInstance(opers, esmpy.api.regrid.Regrid)
         self.assertIsInstance(operc, esmpy.api.regrid.Regrid)
 
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
+    def test_regrids_mtol(self):
+        """Test mtol keyword to regrids."""
+        self.assertFalse(cf.regrid_logging())
+
+        # Source grid
+        s = cf.example_field(0)
+
+        # Destination grid
+        d = s[1:, :]
+        x = d.dimension_coordinate("X")
+        y = d.dimension_coordinate("Y")
+        x.del_bounds()
+        y.del_bounds()
+        x[...] = [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0]
+        y[...] = [-60.0, -22.5, 22.5, 60.0]
+
+        # No missing values
+        x = s.regrids(d, method="linear")
+        self.assertEqual(x.data.count().array, 32)
+
+        # Create some masked source cells
+        for i in range(5):
+            s[i, i:] = cf.masked
+
+        self.assertTrue(
+            np.array_equal(
+                s.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [False, True, True, True, True, True, True, True],
+                    [False, False, True, True, True, True, True, True],
+                    [False, False, False, True, True, True, True, True],
+                    [False, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        for n in (0, 0.24):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.25, 0.49):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.5, 0.74):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [False, False, True, True, True, True, True, True],
+                        [False, False, False, True, True, True, True, True],
+                        [False, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.75, 0.99, 1):
+            x = s.regrids(d, method="linear", use_dst_mask=False, mtol=n)
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [False, False, True, True, True, True, True, True],
+                        [False, False, False, True, True, True, True, True],
+                        [False, False, False, False, True, True, True, True],
+                        [False, False, False, False, False, True, True, True],
+                    ],
+                )
+            )
+
+        # Check bad values of mtol
+        for n in (-1, 3.14):
+            with self.assertRaises(ValueError):
+                x = s.regrids(d, method="linear", mtol=n)
+
+    def test_regridc_mtol(self):
+        """Test mtol keyword to regridc."""
+        self.assertFalse(cf.regrid_logging())
+
+        # Source grid
+        s = cf.example_field(0)
+
+        # Destination grid
+        d = s[1:, :]
+        x = d.dimension_coordinate("X")
+        y = d.dimension_coordinate("Y")
+        x.del_bounds()
+        y.del_bounds()
+        x[...] = [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0]
+        y[...] = [-60.0, -22.5, 22.5, 60.0]
+
+        # No missing values
+        x = s.regrids(d, method="linear")
+        self.assertEqual(x.data.count().array, 32)
+
+        # Create some masked source cells
+        for i in range(5):
+            s[i, i:] = cf.masked
+
+        self.assertTrue(
+            np.array_equal(
+                s.data.mask,
+                [
+                    [True, True, True, True, True, True, True, True],
+                    [False, True, True, True, True, True, True, True],
+                    [False, False, True, True, True, True, True, True],
+                    [False, False, False, True, True, True, True, True],
+                    [False, False, False, False, True, True, True, True],
+                ],
+            )
+        )
+
+        axes = ["Y", "X"]
+
+        for n in (0, 0.24):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.25, 0.49):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.5, 0.74):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, True, True, True, True, True, True, True],
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                    ],
+                )
+            )
+
+        for n in (0.75, 1):
+            x = s.regridc(
+                d, axes=axes, method="linear", use_dst_mask=False, mtol=n
+            )
+            self.assertTrue(
+                np.array_equal(
+                    x.data.mask,
+                    [
+                        [True, False, True, True, True, True, True, True],
+                        [True, False, False, True, True, True, True, True],
+                        [True, False, False, False, True, True, True, True],
+                        [True, False, False, False, False, True, True, True],
+                    ],
+                )
+            )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

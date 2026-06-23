@@ -2345,6 +2345,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         regrid_axes=None,
         regridded_sizes=None,
         min_weight=None,
+        mtol=0,
     ):
         """Regrid the data.
 
@@ -2379,6 +2380,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                   ``{3: 128, 2: 64}``
 
             {{min_weight: float, optional}}
+
+            {{regrid mtol: number, optional}}
+
+                .. versionadded:: NEXVERSION
 
         :Returns:
 
@@ -2478,6 +2483,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             dst_shape=operator.dst_shape,
             axis_order=non_regrid_axes + list(regrid_axes),
             min_weight=min_weight,
+            mtol=mtol,
         )
 
         # Performance note:
