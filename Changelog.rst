@@ -1,7 +1,7 @@
-Version NEXTVERSION
+Version 3.20.1
 --------------
 
-**2026-06-??**
+**2026-06-29**
 
 * New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
   ``mtol`` (https://github.com/NCAS-CMS/cf-python/issues/949)
