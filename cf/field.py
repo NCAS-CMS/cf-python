@@ -13866,7 +13866,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{regrid mtol: number, optional}}
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.1
 
             {{weights_file: `str` or `None`, optional}}
 
@@ -14200,7 +14200,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{regrid mtol: number, optional}}
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.1
 
             {{weights_file: `str` or `None`, optional}}
 

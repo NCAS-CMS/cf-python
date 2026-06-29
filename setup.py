@@ -319,7 +319,7 @@ setup(
     packages=find_packages(),
     package_data={"cf": package_data},
     scripts=["scripts/cfa"],
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,

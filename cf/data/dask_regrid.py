@@ -201,7 +201,7 @@ def regrid(
                 general only be masked if three or more of its
                 source grid cells are masked.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: 3.20.1
 
         :Returns:
 
@@ -472,7 +472,7 @@ def _regrid(
 
             See `regrid` for details.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.20.1
 
         method: `str`
             The name of the regridding method.
