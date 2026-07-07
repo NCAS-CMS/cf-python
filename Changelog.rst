@@ -1,7 +1,7 @@
 Version 3.20.1
 --------------
 
-**2026-06-29**
+**2026-07-07**
 
 * New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
   ``mtol`` (https://github.com/NCAS-CMS/cf-python/issues/949)
@@ -10,6 +10,7 @@ Version 3.20.1
 * Fix bug that caused weighted `cf.collapse` and `cf.weights` to fail
   when a cell meausures has a size 1 axis
   (https://github.com/NCAS-CMS/cf-python/issues/952)
+* Changed dependency: ``cfdm>=1.13.2.1, <1.13.3.0``
 
 ----
 
