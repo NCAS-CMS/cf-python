@@ -8,7 +8,7 @@ Version 3.20.1
 * Fix bug in `cf.read` that prevented some OPeNDAP URLS being read
   (https://github.com/NCAS-CMS/cf-python/issues/948)
 * Fix bug that caused weighted `cf.collapse` and `cf.weights` to fail
-  when a cell meausures has a size 1 axis
+  when a cell measures has a size 1 axis
   (https://github.com/NCAS-CMS/cf-python/issues/952)
 * Changed dependency: ``cfdm>=1.13.2.1, <1.13.3.0``
 
