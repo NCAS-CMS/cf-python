@@ -324,7 +324,7 @@ def regrid(
             destination grid cell will in general only be masked if
             three or more of its source grid cells are masked.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: 3.20.1
 
         inplace: `bool`, optional
             If True then modify *src* in-place and return `None`.

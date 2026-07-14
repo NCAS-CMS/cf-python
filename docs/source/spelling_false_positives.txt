@@ -1,6 +1,7 @@
 absoluted
 absolutised
 abspath
+accessors
 actify
 addattr
 aggregatable
@@ -559,6 +560,7 @@ xor
 xy
 Zarr
 ZarrArray
+zeroes
 Zimmermann
 δu
 δv

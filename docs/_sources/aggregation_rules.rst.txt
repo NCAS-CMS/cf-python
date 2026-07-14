@@ -10,9 +10,7 @@
 
 Version |release| for version |version| of the CF conventions.
 
-*David Hassell and Jonathan Gregory (2012)*
-
-https://cf-trac.llnl.gov/trac/ticket/78
+*David Hassell and Jonathan Gregory (2012, with many updates since)*
 
 Aggregation is the combination of two field constructs :term:`field
 constructs <field construct>` to create a new field construct that

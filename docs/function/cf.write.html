@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=cf9ada82"></script>
+    <script src="../_static/documentation_options.js?v=6be25e9b"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.20.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.20.1</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.write<a class="headerlink" href="#cf-write" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cf.write">
-<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NETCDF4'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_descriptors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Conventions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">least_significant_digit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'native'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fletcher32</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'4</span> <span class="pre">MiB'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_write_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h5py_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.20.0/cf/read_write/write.py#L6-L7"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.write" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NETCDF4'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_descriptors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Conventions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">least_significant_digit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'native'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fletcher32</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'4</span> <span class="pre">MiB'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_write_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h5py_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.20.1/cf/read_write/write.py#L6-L7"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.write" title="Link to this definition">¶</a></dt>
 <dd><p>Write field and domain constructs to a dataset.</p>
 <p>The following dataset formats are supported: netCDF and Zarr.</p>
 <p><strong>Dataset format</strong></p>
@@ -193,53 +193,73 @@ any data that defines its own chunking strategy. See
 <div><dl>
 <dt>fields: (sequence of) <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></dt><dd><p>The field and domain constructs to write to the dataset.</p>
 </dd>
-<dt>dataset_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The output dataset name. Relative paths are allowed, and
-standard tilde and shell parameter expansions are applied
-to the string.</p>
+<dt>dataset_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The output dataset name as a string. Relative paths are
+allowed, and standard tilde and shell parameter expansions
+are applied to the string.</p>
+<p>If the output dataset is located in memory, as opposed to
+on disk (which is determined by the setting of the <em>fmt</em>
+parameter, such as <code class="docutils literal notranslate"><span class="pre">'XARRAY'</span></code>), then <em>dataset_name</em> must
+be <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default).</p>
 <dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p>The file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home directory could
+<dt><em>Example:</em></dt><dd><p>The file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home directory could
 be described by any of the following:
 <code class="docutils literal notranslate"><span class="pre">'$HOME/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'${HOME}/file.nc'</span></code>,
-<code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code>, etc.</p>
 </dd>
 </dl>
 </dd>
-<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The format of the output dataset. One of:</p>
+<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The format of the output dataset, which is either located
+on disk or in memory. One of:</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p><em>fmt</em></p></th>
+<th class="head"><p>Location</p></th>
 <th class="head"><p>Output dataset type</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code></p></td>
-<td><p>NetCDF4 format file. This is
-the default.</p></td>
+<td><p>Disk</p></td>
+<td><p>NetCDF4 format (see
+below). This is the
+default.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF4_CLASSIC'</span></code></p></td>
-<td><p>NetCDF4 classic format file
-(see below)</p></td>
+<td><p>Disk</p></td>
+<td><p>NetCDF4 classic
+format file (see below).</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code></p></td>
-<td><p>NetCDF3 classic format file
-(limited to file sizes less
-than 2GB).</p></td>
+<td><p>Disk</p></td>
+<td><p>NetCDF3 classic format
+file limited to file
+sizes of less than 2GB
+(see below).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code></p></td>
-<td><p>NetCDF3 64-bit offset format
-file</p></td>
+<td><p>Disk</p></td>
+<td><p>NetCDF3 64-bit offset
+format file.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT'</span></code></p></td>
+<td><p>Disk</p></td>
 <td><p>An alias for
 <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code></p></td>
-<td><p>NetCDF3 64-bit offset format
-file with extensions (see
-below)</p></td>
+<td><p>Disk</p></td>
+<td><p>NetCDF3 64-bit offset
+format file with
+extensions (see below).</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'ZARR3'</span></code></p></td>
-<td><p>Zarr v3 dataset</p></td>
+<td><p>Disk</p></td>
+<td><p>Zarr v3 dataset.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'XARRAY'</span></code></p></td>
+<td><p>Memory</p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset (see
+below).</p></td>
 </tr>
 </tbody>
 </table>
@@ -260,6 +280,14 @@ read by netCDF3 clients only if they have been re-linked
 against the netCDF4 library.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code> files use the version 4 disk format (HDF5)
 and use the new features of the version 4 API.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'XARRAY'</span></code> datasets in memory will be either
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.Dataset</span></code> (if there are no sub-groups of the root
+group) or else <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.DataTree</span></code> (if there are sub-groups
+of the root group). If the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf_xarray</span></code> package
+(<a class="reference external" href="https://cf-xarray.readthedocs.io">https://cf-xarray.readthedocs.io</a>) is installed then the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf_xarray</span></code> accessors that allow some interpretation of CF
+attributes will be present on <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.Dataset</span></code> objects.</p>
 </dd>
 <dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the mode of write access for the output
 dataset. One of:</p>
@@ -427,7 +455,7 @@ do not support 64-bit integers). By default, input data
 types are preserved. Any data type conversion is only
 applied to the arrays on disk, and not to the input field
 constructs themselves.</p>
-<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
+<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
 objects in a dictionary whose keys are input data types
 with values of output data types.</p>
 <dl class="simple">
@@ -573,9 +601,9 @@ resulting warning may be suppressed by setting
 <dl>
 <dt>group: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then create a “flat” dataset, i.e. one with only
 the root group, regardless of any group structure
-specified by the field constructs. By default any groups
-defined by the netCDF interface of the field constructs
-and its components will be created and populated.</p>
+specified by the netCDF interfaces of the fields or domain
+and their components. If True (the default) then any
+sub-groups will be created and populated.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.8.6</p>
 </div>
@@ -910,7 +938,7 @@ non-aggregation variable will be written in this case.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">'h5netcdf-h5py'</span></code></p>
 <ul>
 <li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">h5netcdf</span></code> library using <code class="xref py py-obj docutils literal notranslate"><span class="pre">h5py</span></code> as its backend.</p></li>
-<li><p>Writes netCDF-4 datasets.</p></li>
+<li><p>Writes netCDF-4 datasets to disk.</p></li>
 <li><p>Allows control of the internal file metadata via the
 <em>h5py_options</em> parameter.</p></li>
 </ul>
@@ -918,13 +946,20 @@ non-aggregation variable will be written in this case.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code></p>
 <ul>
 <li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4</span></code> library.</p></li>
-<li><p>Writes netCDF-4 and netCDF-3 datasets.</p></li>
+<li><p>Writes netCDF-4 and netCDF-3 datasets to disk.</p></li>
 </ul>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">'zarr'</span></code></p>
 <ul>
 <li><p>The <a class="reference external" href="https://zarr.readthedocs.io/en/stable/api/zarr/#zarr" title="(in zarr-python v0.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr</span></code></a> library.</p></li>
-<li><p>Writes Zarr datasets.</p></li>
+<li><p>Writes Zarr datasets to disk.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'xarray'</span></code></p>
+<ul>
+<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> library.</p></li>
+<li><p>Creates <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> datasets in memory.</p></li>
+<li><p>No files or directories are created on disk.</p></li>
 </ul>
 </li>
 </ul>
@@ -937,6 +972,7 @@ parameter, as follows:</p>
 <li><p>For all netCDF-3 formats the default backend is
 <code class="docutils literal notranslate"><span class="pre">netCDF4</span></code>.</p></li>
 <li><p>For all Zarr formats the default backend is <code class="docutils literal notranslate"><span class="pre">zarr</span></code>.</p></li>
+<li><p>For all xarray formats the default backend is <code class="docutils literal notranslate"><span class="pre">xarray</span></code>.</p></li>
 </ul>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.13.1.0</p>
@@ -973,7 +1009,11 @@ and metadata constructs and their components.</p>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.Dataset</span></code></dt><dd><p>When writing to disk, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned. When writing to
+an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset in memory, the dataset is returned.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
@@ -1001,7 +1041,7 @@ and metadata constructs and their components.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-04-10.
+      &#169;2026, NCAS | Page built on 2026-07-07.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

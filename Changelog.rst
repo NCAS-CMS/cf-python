@@ -1,8 +1,5 @@
-Version NEXTVERSION
---------------
-
-**2026-06-??**
-
+Version ???
+-----------
 * New methods to convert to `xarray`: `cf.Field.to_xarray`,
   `cf.FieldList.to_xarray`, `cf.Domain.to_xarray`, and
   `cf.DomainList.to_xarray`
@@ -10,14 +7,23 @@ Version NEXTVERSION
 * New output format for `cf.write` that creates an `xarray` dataset in
   memory: ``'XARRAY'``
   (https://github.com/NCAS-CMS/cf-python/issues/933)
+* New optional dependency: ``xarray>=2026.2.0``
+
+----
+
+Version 3.20.1
+--------------
+
+**2026-07-07**
+
 * New keyword parameter to `cf.Field.regrids` and `cf.Field.regridc`:
   ``mtol`` (https://github.com/NCAS-CMS/cf-python/issues/949)
 * Fix bug in `cf.read` that prevented some OPeNDAP URLS being read
   (https://github.com/NCAS-CMS/cf-python/issues/948)
 * Fix bug that caused weighted `cf.collapse` and `cf.weights` to fail
-  when a cell meausures has a size 1 axis
+  when a cell measures has a size 1 axis
   (https://github.com/NCAS-CMS/cf-python/issues/952)
-* New optional dependency: ``xarray>=2026.2.0``
+* Changed dependency: ``cfdm>=1.13.2.1, <1.13.3.0``
 
 ----
 
