@@ -196,7 +196,7 @@ The ``cf`` package can:
   uncompressed form,
 * read and write data that are quantized to eliminate false
   precision,
-* Convert field and domain constructs to `xarray` datasets in memory,
+* convert field and domain constructs to `xarray` datasets in memory,
 * inspect field constructs,
 * test whether two field constructs are the same,
 * modify field construct metadata and data,

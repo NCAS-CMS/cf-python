@@ -339,7 +339,7 @@ class FieldDomainList:
 
         Note that ``ds = fl.to_xarray()`` is identical to ``ds =
         cf.write(fl, fmt='XARRAY')``. Also, `cfdm.write` allows a
-        mixture a mixture of fields and domains to be written to the
+        mixture of fields and domains to be written to the
         same `xarray` dataset.
 
         .. versionadded:: NEXTVERSION

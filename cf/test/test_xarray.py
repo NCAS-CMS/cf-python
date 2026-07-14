@@ -57,7 +57,7 @@ class xarrayTest(unittest.TestCase):
         str(ds)
 
     def test_FieldList_to_xarray(self):
-        """Test Field.to_xarray."""
+        """Test FieldList.to_xarray."""
         fields = cf.example_fields()
         ds = fields.to_xarray()
         self.assertIsInstance(ds, xr.Dataset)
@@ -142,7 +142,7 @@ class xarrayTest(unittest.TestCase):
         self.assertIn("q2", ds)
 
     def test_FieldList_to_xarray_groups(self):
-        """Test Field.to_xarray with groups."""
+        """Test FieldList.to_xarray with groups."""
         f = cf.example_fields(0)
 
         ds = f.to_xarray()

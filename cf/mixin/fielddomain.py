@@ -3894,7 +3894,7 @@ class FieldDomain:
         be written to the same `xarray` dataset with
         `cf.{{class}}List.to_xarray`, or with `cf.write` (e.g. ``ds =
         cf.write([f, g], fmt='XARRAY')``). Also, `cf.write` allows a
-        mixture a mixture of fields and domains to be written to the
+        mixture of fields and domains to be written to the
         same `xarray` dataset.
 
         .. versionadded:: NEXTVERSION
