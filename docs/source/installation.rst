@@ -275,7 +275,7 @@ environments for which these features are not required.
 
 .. rubric:: xarray
 
-* `xarray <https://pypi.org/project/xarray>`_, version 2026.2.0 or newer.
+* `xarray <https://pypi.org/project/xarray>`_, version 2026.7.0 or newer.
 
   For converting fields and domains to `xarray` datasets in memory.
 
