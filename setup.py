@@ -258,7 +258,7 @@ extras_require = {
         "zarr>=3.1.3",
     ],
     "xarray": [
-        "xarray>=2026.2.0",
+        "xarray>=2026.7.0",
     ],
 }
 
