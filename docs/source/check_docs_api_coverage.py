@@ -1,4 +1,6 @@
-"""Check the method-coverage of all classes in docs/source/class.rst.
+"""Check the class-coverage and method-coverage of the API reference.
+
+All classes are extracted and checked for an entry in docs/source/class.rst
 
 All non-private methods of all such classes are checked for having an
 entry in their corresponding class's file in docs/source/class/
@@ -70,7 +72,7 @@ for core in ("", "_core"):
         full_class_name = f"{package.__name__}.{class_name}"
 
         if full_class_name not in api_contents:
-            print(f"Class {full_class_name} not in class{core}.rst")
+            print(f"Class {full_class_name} not in docs/source/class{core}.rst")
             n_missing_files += 1
             continue
 
@@ -93,7 +95,7 @@ for core in ("", "_core"):
                     print(f"Method {method} not in {rst_file}")
         except FileNotFoundError:
             n_missing_files += 1
-            print(f"File {rst_file} does not exist")
+            print(f"File {rst_file} does not exist for existing class ")
 
 if n_undocumented_methods or n_missing_files:
     raise ValueError(
