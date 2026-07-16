@@ -45,10 +45,23 @@ for core in ("", "_core"):
     with open(os.path.join(source, "class" + core + ".rst")) as f:
         api_contents = f.read()
 
+    # TODO: after #958 is resolved, replace this by grabbing all classes from
+    # '__all__', which defines the public API and therefore what must be
+    # include - and do the same for the methods etc.
     class_names = [
         name
         for name, klass in inspect.getmembers(package, inspect.isclass)
         if klass.__module__.startswith(package.__name__ + ".")
+        # Because of docstring substitution in cfdm, all functions imported
+        # from there emerge as classes, with:
+        # type= <class 'cfdm.core.meta.docstringrewrite.DocstringRewriteMeta'>
+        # so when we try to extract classes only we end up with a lot of
+        # functions mixed in. To filter these out, we can use the fact that
+        # the functions emerge from just some modules, notably .functions etc.:
+        and not klass.__module__.startswith(package.__name__ + ".functions")
+        and not klass.__module__.startswith(package.__name__ + ".constants")
+        # This just counts top-level read-write i.e. cf.read and cf.write
+        and not klass.__module__.startswith(package.__name__ + ".read_write")
     ]
 
     for class_name in class_names:
