@@ -12,6 +12,7 @@ Call as:
 
 """
 
+import inspect
 import os
 import sys
 
@@ -32,6 +33,7 @@ if not source.endswith("source"):
 n_undocumented_methods = 0
 n_missing_files = 0
 
+
 for core in ("", "_core"):
     if core:
         if package.__name__ != "cfdm":
@@ -44,29 +46,35 @@ for core in ("", "_core"):
         api_contents = f.read()
 
     class_names = [
-        i.split(".")[-1]
-        for i in api_contents.split("\n")
-        if package.__name__ + "." in i
+        name
+        for name, klass in inspect.getmembers(package, inspect.isclass)
+        if klass.__module__.startswith(package.__name__ + ".")
     ]
 
     for class_name in class_names:
         class_name = class_name.rstrip()
+
+        full_class_name = f"{package.__name__}.{class_name}"
+
+        if full_class_name not in api_contents:
+            print(f"Class {full_class_name} not in class{core}.rst")
+            n_missing_files += 1
+            continue
 
         klass = getattr(package, class_name)
 
         methods = [
             method for method in dir(klass) if not method.startswith("_")
         ]
-        class_name = ".".join([package.__name__, class_name])
 
-        rst_file = os.path.join(source, "class", class_name + ".rst")
+        rst_file = os.path.join(source, "class", full_class_name + ".rst")
 
         try:
             with open(rst_file) as f:
                 rst_contents = f.read()
 
             for method in methods:
-                method = ".".join([class_name, method])
+                method = ".".join([full_class_name, method])
                 if method not in rst_contents:
                     n_undocumented_methods += 1
                     print(f"Method {method} not in {rst_file}")
