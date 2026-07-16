@@ -32,7 +32,16 @@ Domain class
    :toctree: class/
 
    cf.Domain
-   
+
+Domain list class
+-----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cf.DomainList
+
 Metadata component classes
 --------------------------
 
@@ -51,15 +60,16 @@ Metadata component classes
    cf.DomainTopology
    cf.FieldAncillary
 
-Constructs class
-----------------
+Constructs classes
+------------------
 
 .. autosummary::
    :nosignatures:
    :toctree: class/
 
    cf.Constructs
-   
+   cf.ConstructList
+
 Coordinate component classes
 ----------------------------
 
@@ -70,7 +80,8 @@ Coordinate component classes
    cf.Bounds
    cf.CoordinateConversion
    cf.Datum
-      
+   cf.InteriorRing
+
 Data classes
 ------------
 
@@ -78,10 +89,13 @@ Data classes
    :nosignatures:
    :toctree: class/
 
+   cf.AggregatedArray
    cf.Data
    cf.H5netcdfArray
    cf.NetCDF4Array
    cf.FullArray
+   cf.ScipyNetcdfFileArray
+   cf.PyfiveArray
    cf.UMArray
    cf.ZarrArray
    
@@ -102,6 +116,7 @@ Classes that support the creation and storage of compressed arrays.
    cf.RaggedIndexedArray
    cf.RaggedIndexedContiguousArray
    cf.SubsampledArray
+   cf.TiePointIndex
    cf.Quantization
 
 Data UGRID classes
@@ -116,7 +131,18 @@ Classes that support the creation and storage of UGRID-related arrays.
    cf.BoundsFromNodesArray
    cf.CellConnectivityArray
    cf.PointTopologyArray
-   
+   cf.NodeCountProperties
+   cf.PartNodeCountProperties
+
+CF Data Model Implementation class
+----------------------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cf.CFImplementation
+
 Miscellaneous classes
 ---------------------
 
@@ -131,4 +157,13 @@ Miscellaneous classes
    cf.RegridOperator
    cf.Constant
    cf.Configuration
-  
+   cf.InterpolationParameter
+
+Deprecated classes
+------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cf.NetCDFArray
