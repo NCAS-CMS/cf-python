@@ -1,7 +1,7 @@
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. _domainlist:
+.. _interpolationparameter:
 
 cf.InterpolationParameter
 =========================
@@ -11,3 +11,195 @@ cf.InterpolationParameter
 .. autoclass:: cf.InterpolationParameter
    :no-members:
    :no-inherited-members:
+
+Methods
+-------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.InterpolationParameter.Data
+   ~cf.InterpolationParameter.T
+   ~cf.InterpolationParameter.Units
+   ~cf.InterpolationParameter.X
+   ~cf.InterpolationParameter.Y
+   ~cf.InterpolationParameter.Z
+   ~cf.InterpolationParameter.add_offset
+   ~cf.InterpolationParameter.all
+   ~cf.InterpolationParameter.allclose
+   ~cf.InterpolationParameter.any
+   ~cf.InterpolationParameter.apply_masking
+   ~cf.InterpolationParameter.arccos
+   ~cf.InterpolationParameter.arccosh
+   ~cf.InterpolationParameter.arcsin
+   ~cf.InterpolationParameter.arcsinh
+   ~cf.InterpolationParameter.arctan
+   ~cf.InterpolationParameter.arctanh
+   ~cf.InterpolationParameter.array
+   ~cf.InterpolationParameter.asdatetime
+   ~cf.InterpolationParameter.asreftime
+   ~cf.InterpolationParameter.attributes
+   ~cf.InterpolationParameter.binary_mask
+   ~cf.InterpolationParameter.calendar
+   ~cf.InterpolationParameter.ceil
+   ~cf.InterpolationParameter.chunk
+   ~cf.InterpolationParameter.clear_properties
+   ~cf.InterpolationParameter.clip
+   ~cf.InterpolationParameter.close
+   ~cf.InterpolationParameter.comment
+   ~cf.InterpolationParameter.concatenate
+   ~cf.InterpolationParameter.convert_reference_time
+   ~cf.InterpolationParameter.copy
+   ~cf.InterpolationParameter.cos
+   ~cf.InterpolationParameter.cosh
+   ~cf.InterpolationParameter.count
+   ~cf.InterpolationParameter.count_masked
+   ~cf.InterpolationParameter.creation_commands
+   ~cf.InterpolationParameter.cyclic
+   ~cf.InterpolationParameter.data
+   ~cf.InterpolationParameter.datetime_array
+   ~cf.InterpolationParameter.datum
+   ~cf.InterpolationParameter.day
+   ~cf.InterpolationParameter.del_data
+   ~cf.InterpolationParameter.del_properties
+   ~cf.InterpolationParameter.del_property
+   ~cf.InterpolationParameter.delprop
+   ~cf.InterpolationParameter.dtarray
+   ~cf.InterpolationParameter.dtvarray
+   ~cf.InterpolationParameter.dtype
+   ~cf.InterpolationParameter.dump
+   ~cf.InterpolationParameter.equals
+   ~cf.InterpolationParameter.equivalent
+   ~cf.InterpolationParameter.exp
+   ~cf.InterpolationParameter.expand_dims
+   ~cf.InterpolationParameter.file_directories
+   ~cf.InterpolationParameter.fill_value
+   ~cf.InterpolationParameter.filled
+   ~cf.InterpolationParameter.flatten
+   ~cf.InterpolationParameter.flip
+   ~cf.InterpolationParameter.floor
+   ~cf.InterpolationParameter.get_data
+   ~cf.InterpolationParameter.get_filenames
+   ~cf.InterpolationParameter.get_original_filenames
+   ~cf.InterpolationParameter.get_property
+   ~cf.InterpolationParameter.get_quantization
+   ~cf.InterpolationParameter.get_quantize_on_write
+   ~cf.InterpolationParameter.getprop
+   ~cf.InterpolationParameter.halo
+   ~cf.InterpolationParameter.hardmask
+   ~cf.InterpolationParameter.has_bounds
+   ~cf.InterpolationParameter.has_data
+   ~cf.InterpolationParameter.has_property
+   ~cf.InterpolationParameter.hasbounds
+   ~cf.InterpolationParameter.hasdata
+   ~cf.InterpolationParameter.hasprop
+   ~cf.InterpolationParameter.history
+   ~cf.InterpolationParameter.hour
+   ~cf.InterpolationParameter.id
+   ~cf.InterpolationParameter.identities
+   ~cf.InterpolationParameter.identity
+   ~cf.InterpolationParameter.insert_data
+   ~cf.InterpolationParameter.insert_dimension
+   ~cf.InterpolationParameter.inspect
+   ~cf.InterpolationParameter.isauxiliary
+   ~cf.InterpolationParameter.iscyclic
+   ~cf.InterpolationParameter.isdimension
+   ~cf.InterpolationParameter.isdomainancillary
+   ~cf.InterpolationParameter.isfieldancillary
+   ~cf.InterpolationParameter.ismeasure
+   ~cf.InterpolationParameter.isperiodic
+   ~cf.InterpolationParameter.isscalar
+   ~cf.InterpolationParameter.leap_month
+   ~cf.InterpolationParameter.leap_year
+   ~cf.InterpolationParameter.log
+   ~cf.InterpolationParameter.long_name
+   ~cf.InterpolationParameter.mask
+   ~cf.InterpolationParameter.mask_invalid
+   ~cf.InterpolationParameter.masked_invalid
+   ~cf.InterpolationParameter.match
+   ~cf.InterpolationParameter.match_by_identity
+   ~cf.InterpolationParameter.match_by_naxes
+   ~cf.InterpolationParameter.match_by_ncvar
+   ~cf.InterpolationParameter.match_by_property
+   ~cf.InterpolationParameter.match_by_units
+   ~cf.InterpolationParameter.max
+   ~cf.InterpolationParameter.maximum
+   ~cf.InterpolationParameter.mean
+   ~cf.InterpolationParameter.mid_range
+   ~cf.InterpolationParameter.min
+   ~cf.InterpolationParameter.minimum
+   ~cf.InterpolationParameter.minute
+   ~cf.InterpolationParameter.missing_value
+   ~cf.InterpolationParameter.month
+   ~cf.InterpolationParameter.month_lengths
+   ~cf.InterpolationParameter.name
+   ~cf.InterpolationParameter.nc_clear_dataset_chunksizes
+   ~cf.InterpolationParameter.nc_clear_hdf5_chunksizes
+   ~cf.InterpolationParameter.nc_clear_variable_groups
+   ~cf.InterpolationParameter.nc_dataset_chunksizes
+   ~cf.InterpolationParameter.nc_del_variable
+   ~cf.InterpolationParameter.nc_get_variable
+   ~cf.InterpolationParameter.nc_has_variable
+   ~cf.InterpolationParameter.nc_hdf5_chunksizes
+   ~cf.InterpolationParameter.nc_set_dataset_chunksizes
+   ~cf.InterpolationParameter.nc_set_hdf5_chunksizes
+   ~cf.InterpolationParameter.nc_set_variable
+   ~cf.InterpolationParameter.nc_set_variable_groups
+   ~cf.InterpolationParameter.nc_variable_groups
+   ~cf.InterpolationParameter.ndim
+   ~cf.InterpolationParameter.override_calendar
+   ~cf.InterpolationParameter.override_units
+   ~cf.InterpolationParameter.pad_missing
+   ~cf.InterpolationParameter.period
+   ~cf.InterpolationParameter.persist
+   ~cf.InterpolationParameter.properties
+   ~cf.InterpolationParameter.range
+   ~cf.InterpolationParameter.rechunk
+   ~cf.InterpolationParameter.reference_datetime
+   ~cf.InterpolationParameter.remove_data
+   ~cf.InterpolationParameter.replace_directory
+   ~cf.InterpolationParameter.rint
+   ~cf.InterpolationParameter.roll
+   ~cf.InterpolationParameter.round
+   ~cf.InterpolationParameter.sample_size
+   ~cf.InterpolationParameter.scale_factor
+   ~cf.InterpolationParameter.sd
+   ~cf.InterpolationParameter.second
+   ~cf.InterpolationParameter.select
+   ~cf.InterpolationParameter.set_data
+   ~cf.InterpolationParameter.set_properties
+   ~cf.InterpolationParameter.set_property
+   ~cf.InterpolationParameter.setprop
+   ~cf.InterpolationParameter.shape
+   ~cf.InterpolationParameter.sin
+   ~cf.InterpolationParameter.sinh
+   ~cf.InterpolationParameter.size
+   ~cf.InterpolationParameter.squeeze
+   ~cf.InterpolationParameter.standard_deviation
+   ~cf.InterpolationParameter.standard_name
+   ~cf.InterpolationParameter.subspace
+   ~cf.InterpolationParameter.sum
+   ~cf.InterpolationParameter.swapaxes
+   ~cf.InterpolationParameter.tan
+   ~cf.InterpolationParameter.tanh
+   ~cf.InterpolationParameter.to_dask_array
+   ~cf.InterpolationParameter.to_memory
+   ~cf.InterpolationParameter.to_units
+   ~cf.InterpolationParameter.transpose
+   ~cf.InterpolationParameter.trunc
+   ~cf.InterpolationParameter.uncompress
+   ~cf.InterpolationParameter.unique
+   ~cf.InterpolationParameter.units
+   ~cf.InterpolationParameter.unsafe_array
+   ~cf.InterpolationParameter.valid_max
+   ~cf.InterpolationParameter.valid_min
+   ~cf.InterpolationParameter.valid_range
+   ~cf.InterpolationParameter.var
+   ~cf.InterpolationParameter.variance
+   ~cf.InterpolationParameter.varray
+   ~cf.InterpolationParameter.where
+   ~cf.InterpolationParameter.year
