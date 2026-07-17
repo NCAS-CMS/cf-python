@@ -1,7 +1,7 @@
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. _fieldlist:
+.. _domainlist:
 
 cf.DomainList
 =============
@@ -22,15 +22,12 @@ Selecting
 
    ~cf.DomainList.select_by_construct    
    ~cf.DomainList.select_by_identity
-   ~cf.DomainList.select_by_naxes
    ~cf.DomainList.select_by_ncvar
    ~cf.DomainList.select_by_property
    ~cf.DomainList.select_by_rank
-   ~cf.DomainList.select_by_units
    ~cf.DomainList.select
-   ~cf.DomainList.select_field
    ~cf.DomainList.__call__
-   
+
 Comparison
 ----------
 
@@ -64,7 +61,6 @@ Miscellaneous
    :template: method.rst
 
    ~cf.DomainList.close
-   ~cf.DomainList.concatenate
    ~cf.DomainList.copy 
 
 Aliases
@@ -93,11 +89,11 @@ These methods provide functionality identical to that of a Python
 
 For example
 
->>> fl.count(x)
+>>> dl.count(x)
 
 is equivalent to
 
->>> sum(f.equals(x) for f in fl)
+>>> sum(d.equals(x) for d in dl)
 
 .. autosummary::
    :nosignatures:
@@ -144,18 +140,3 @@ Special methods
 
    ~cf.DomainList.__call__
    ~cf.DomainList.__deepcopy__
-   
-.. ?? __hash__
-
-Deprecated
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DomainList.select1
-   ~cf.DomainList.set_equals
