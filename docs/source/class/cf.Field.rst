@@ -26,7 +26,7 @@ Inspection
    :template: method.rst
 
    ~cf.Field.dump
-   ~cf.Field.identity  
+   ~cf.Field.identity
    ~cf.Field.identities
    ~cf.Field.inspect
 
