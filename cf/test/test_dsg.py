@@ -181,11 +181,10 @@ class DSGTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Test creation
         # ------------------------------------------------------------
-        # Define the ragged array values
-        ragged_array = numpy.array(
-            [280, 282.5, 281, 279, 278, 279.5], dtype="float32"
+        ragged_array = cf.Data(
+            np.array([280, 282.5, 281, 279, 278, 279.5], dtype="float32")
         )
-
+        
         # Define the count array values
         count_array = [2, 4]
 
