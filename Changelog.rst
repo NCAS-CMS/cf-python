@@ -1,5 +1,11 @@
-Version ???
------------
+Version NEXTVERSION
+--------------
+
+**2026-08-??**
+
+* In `cf.write`, set sensible dataset chunksizes by default for 1-d
+  data, controlled by the new ``one_d_chunks`` keyword
+  (https://github.com/NCAS-CMS/cfdm/issues/414)
 * New methods to convert to `xarray`: `cf.Field.to_xarray`,
   `cf.FieldList.to_xarray`, `cf.Domain.to_xarray`, and
   `cf.DomainList.to_xarray`
