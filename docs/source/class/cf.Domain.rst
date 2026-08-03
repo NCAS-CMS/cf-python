@@ -8,7 +8,7 @@ cf.Domain
 
 ----
 
-.. autoclass:: cfdm.Domain
+.. autoclass:: cf.Domain
    :no-members:
    :no-inherited-members:
 

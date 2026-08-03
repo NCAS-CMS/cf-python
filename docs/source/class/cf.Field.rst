@@ -26,7 +26,7 @@ Inspection
    :template: method.rst
 
    ~cf.Field.dump
-   ~cf.Field.identity  
+   ~cf.Field.identity
    ~cf.Field.identities
    ~cf.Field.inspect
 
@@ -171,7 +171,7 @@ Data
    ~cf.Field.shape
    ~cf.Field.size
    ~cf.Field.to_dask_array
-    ~cf.Field.varray
+   ~cf.Field.varray
 
 .. rubric:: *Rearranging elements*
 
