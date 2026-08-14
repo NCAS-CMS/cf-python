@@ -6,7 +6,7 @@ Version NEXTVERSION
 * Automatically create consolidated HDF5 metadata with `cf.write`.
   New keywords to `cf.write`: ``hdf5_consolidated_metadata`` and
   ``hdf5_expansion_factor``
-  (https://github.com/NCAS-CMS/cfdm/pull/413)
+  (https://github.com/NCAS-CMS/cfdm/issues/413)
 * In `cf.write`, set sensible dataset chunksizes by default for 1-d
   data, controlled by the new ``one_d_chunks`` keyword
   (https://github.com/NCAS-CMS/cfdm/issues/414)
