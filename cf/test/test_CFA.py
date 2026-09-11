@@ -181,7 +181,7 @@ class CFATest(unittest.TestCase):
         f = cf.read(tmpfile1, cfa_write="all")[0]
 
         # No constructs
-        cf.write(f, tmpfile2, cfa={"constructs": []})
+        cf.write(f, tmpfile2, cfa=[])
         nc = netCDF4.Dataset(tmpfile2, "r")
         for var in nc.variables.values():
             attrs = var.ncattrs()
@@ -311,6 +311,9 @@ class CFATest(unittest.TestCase):
         cf.write(f, tmpfile2, cfa="field")
         g = cf.read(tmpfile2, cfa_write="field")[0]
 
+        cf.write(f, tmpfile2, cfa=["field"])
+        g = cf.read(tmpfile2, cfa_write="field")[0]
+
         # Default of cfa="auto" - check that aggregation variable
         # gets written
         cf.write(g, cfa_file)
@@ -345,7 +348,7 @@ class CFATest(unittest.TestCase):
         nc.close()
 
         # Check bad values of cfa
-        for cfa in (False, True, (), []):
+        for cfa in (False, True):
             with self.assertRaises(ValueError):
                 cf.write(g, cfa_file, cfa=cfa)
 
