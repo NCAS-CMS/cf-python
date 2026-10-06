@@ -1,3 +1,14 @@
+Version NEXTVERSION
+--------------
+
+**2026-10-??**
+
+* Fix problems creating CFA variables with `cf.write` from
+  aggregation-promoted field ancillaries
+  (https://github.com/NCAS-CMS/cf-python/issues/971)
+
+----
+
 Version 3.21.0
 --------------
 

@@ -3846,9 +3846,9 @@ def _create_hash_and_first_values(
         # ------------------------------------------------------------
         # Field ancillaries
         #
-        # No need to calcuate actual hash values for field
-        # ancillaries, as they always get concatenated, regardless of
-        # their values.
+        # No need to calculate actual hash values for field
+        # ancillaries (which can be very slow), because they always
+        # get concatenated regardless of their values.
         # ------------------------------------------------------------
         for anc in m.field_anc.values():
             anc["hash_value"] = (None,)
@@ -5020,10 +5020,12 @@ def _fix_promoted_field_ancillaries(output_meta, axes_aggregated):
             fa.squeeze(squeeze, inplace=True)
             fa_axes = [a for i, a in enumerate(fa_axes) if i not in squeeze]
 
-            # Record the field ancillary as being able to be written
-            # as a CF-netCDF aggregation variable (the indexing and
-            # squeezing will likely have set the aggregation write
-            # status to False).
+            # Note that this field ancillary can be written as a
+            # CF-netCDF aggregation variable. (The previous indexing
+            # and squeezing will likely have set the aggregation write
+            # status to False, but we know that promoted field
+            # ancillaries, which only contain a single broadcast
+            # value, are safe in this regard.)
             fa.data._nc_set_aggregation_write_status(True)
 
             # Record the field ancillary as being able to be written
