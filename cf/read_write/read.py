@@ -253,7 +253,7 @@ class read(cfdm.read):
 
             .. versionadded:: 3.15.0
 
-        {{read cfa_write: sequence of `str`, optional}}
+        {{read cfa_write: (sequence of) `str`, optional}}
 
             .. versionadded:: 3.17.0
 

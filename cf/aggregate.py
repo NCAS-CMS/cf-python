@@ -3845,41 +3845,13 @@ def _create_hash_and_first_values(
 
         # ------------------------------------------------------------
         # Field ancillaries
+        #
+        # No need to calculate actual hash values for field
+        # ancillaries (which can be very slow), because they always
+        # get concatenated regardless of their values.
         # ------------------------------------------------------------
-        if donotchecknonaggregatingaxes:
-            for anc in m.field_anc.values():
-                anc["hash_value"] = (None,)
-        else:
-            for anc in m.field_anc.values():
-                key = anc["key"]
-                canonical_units = anc["units"]
-
-                field_anc = constructs[key]
-
-                c_axes = anc["axes"]
-                canonical_axes = anc["canonical_axes"]
-                if c_axes != canonical_axes:
-                    # Transpose the field ancillary so that it has the
-                    # canonical axis order
-                    iaxes = [c_axes.index(axis) for axis in canonical_axes]
-                    field_anc = field_anc.transpose(iaxes)
-
-                sort_indices, needs_sorting = _sort_indices(m, canonical_axes)
-
-                # Get the hash of the data array
-                h = _get_hfl(
-                    field_anc,
-                    canonical_units,
-                    sort_indices,
-                    needs_sorting,
-                    False,
-                    False,
-                    hfl_cache,
-                    rtol,
-                    atol,
-                )
-
-                anc["hash_value"] = (h,)
+        for anc in m.field_anc.values():
+            anc["hash_value"] = (None,)
 
         # ------------------------------------------------------------
         # Domain ancillaries
@@ -5047,6 +5019,14 @@ def _fix_promoted_field_ancillaries(output_meta, axes_aggregated):
             fa = fa[tuple(index)]
             fa.squeeze(squeeze, inplace=True)
             fa_axes = [a for i, a in enumerate(fa_axes) if i not in squeeze]
+
+            # Note that this field ancillary can be written as a
+            # CF-netCDF aggregation variable. (The previous indexing
+            # and squeezing will likely have set the aggregation write
+            # status to False, but we know that promoted field
+            # ancillaries, which only contain a single broadcast
+            # value, are safe in this regard.)
+            fa.data._nc_set_aggregation_write_status(True)
 
             # Record the field ancillary as being able to be written
             # as a CF-netCDF aggregation 'value' variable

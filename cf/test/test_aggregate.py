@@ -1,6 +1,7 @@
 import datetime
 import faulthandler
 import os
+import tempfile
 import unittest
 import warnings
 
@@ -9,6 +10,14 @@ import numpy as np
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
+
+n_tmpfiles = 1
+tmpfiles = [
+    tempfile.mkstemp("_test_aggregate.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+[tmpfile] = tmpfiles
+
 
 # To facilitate the testing of logging outputs (see test_aggregate_verbosity)
 log_name = __name__
@@ -329,6 +338,8 @@ class aggregateTest(unittest.TestCase):
         self.assertEqual(anc.shape, f.shape[:1])
         self.assertTrue((anc[:2] == "bar_a").all())
         self.assertTrue((anc[2:] == "bar_b").all())
+
+        cf.write(c, tmpfile, cfa="field_ancillary")
 
     def test_aggregate_cells(self):
         """Test the 'cells' keyword of cf.aggregate"""
