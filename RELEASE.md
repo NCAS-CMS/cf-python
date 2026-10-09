@@ -152,10 +152,13 @@
   ./release_docs latest
   ```
   
-- [ ] Create a source tarball:
+- [ ] Create a source tarball (previously we used `python setup.py sdist` but this is now deprecated,
+    see: https://packaging.python.org/en/latest/discussions/setup-py-deprecated/). Note we use the
+    `--sdist` option to avoid creating a `wheel` product too which we don't need, and this command
+    needs `build` to be installed with e.g. `pip install build`, see: https://pypi.org/project/build/.
 
   ```bash
-  python setup.py sdist
+  python -m build --sdist
   ```
 
 - [ ] Test the tarball release using

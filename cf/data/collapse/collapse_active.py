@@ -243,9 +243,11 @@ def active_chunk_function(method, *args, **kwargs):
         # Raise an ActiveStorageError that will in turn trigger
         # (inside `actify`) a local reduction to be carried out
         # instead.
-        raise ActiveStorageError(
-            f"FAILED in active storage {details} ({error}))"
-        )
+        message = f"FAILED in active storage ({error})"
+        if info:
+            message += f": {details}"
+        raise ActiveStorageError(message)
+
     else:
         # Active storage reduction was successful
         if info:

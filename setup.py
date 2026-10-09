@@ -154,15 +154,17 @@ The ``cf`` package can:
 requirements = open("requirements.txt", "r")
 install_requires = requirements.read().splitlines()
 
-tests_require = (
-    [
+extras_require = {
+    "required C libraries": ["udunits2==2.2.25"],
+    "test": [
         "pytest",
         "pycodestyle",
         "coverage",
     ],
-)
-extras_require = {
-    "required C libraries": ["udunits2==2.2.25"],
+    "release": [
+        "build",
+        "twine",
+    ],
     "regridding": ["esmpy>=8.7.0", "ESMF>=8.0"],
     "convolution filters, derivatives, relative vorticity": ["scipy>=1.1.0"],
     "subspacing with multi-dimensional construct cells": ["matplotlib>=3.0.0"],
@@ -216,7 +218,6 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: MIT License",
         "Topic :: Scientific/Engineering :: Mathematics",
         "Topic :: Scientific/Engineering :: Physics",
         "Topic :: Scientific/Engineering :: Atmospheric Science",
@@ -225,17 +226,16 @@ setup(
         "Operating System :: MacOS",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
     ],
     packages=find_packages(),
     package_data={"cf": package_data},
     scripts=["scripts/cfa"],
-    python_requires=">=3.10",
+    python_requires=">=3.11",
     install_requires=install_requires,
-    tests_require=tests_require,
     extras_require=extras_require,
     include_package_data=True,
 )

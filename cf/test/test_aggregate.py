@@ -201,23 +201,8 @@ class aggregateTest(unittest.TestCase):
             )
 
         # and neither should emerge at the 'WARNING' (1) level.
-        with self.assertLogs(level="NOTSET") as catch:
-            logger.warning(
-                "Dummy message to log something at warning level so that "
-                "'assertLog' does not error when no logs messages emerge."
-            )
-            # Note: can use assertNoLogs in Python 3.10 to avoid this, see:
-            # https://bugs.python.org/issue39385
-
+        with self.assertNoLogs(level="WARNING"):
             cf.aggregate([f0, f1], verbose=1)
-            for header in (detail_header, debug_header):
-                self.assertFalse(
-                    any(
-                        log_item.startswith(header)
-                        for log_item in catch.output
-                    ),
-                    f"A log entry begins with '{header}' but should not",
-                )
 
     def test_aggregate_bad_units(self):
         f = cf.read(self.filename, squeeze=True)[0]

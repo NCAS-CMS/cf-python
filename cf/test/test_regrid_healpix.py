@@ -2,6 +2,7 @@ import datetime
 import faulthandler
 import os
 import unittest
+from importlib.util import find_spec
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -15,6 +16,9 @@ try:
 except ImportError:
     esmpy_imported = False
 
+# Note: here only need healpix for cf under-the-hood code, not in test
+# directly, so no need to actually import healpix, just test it is there.
+healpix_available = find_spec("healpix")
 
 all_methods = (
     "linear",
@@ -54,7 +58,10 @@ class RegridMeshTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(
+        esmpy_imported and healpix_available,
+        "Requires esmpy and healpix packages.",
+    )
     def test_Field_regrid_mesh_to_healpix(self):
         # Check that UGRID -> healpix is the same as UGRID -> UGRID
         self.assertFalse(cf.regrid_logging())
@@ -83,7 +90,10 @@ class RegridMeshTest(unittest.TestCase):
                 # Check that the result is a HEALPix grid
                 self.assertTrue(cf.healpix_utils.healpix_info(x))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(
+        esmpy_imported and healpix_available,
+        "Requires esmpy and healpix packages.",
+    )
     def test_Field_regrid_healpix_to_mesh(self):
         # Check that healpix -> UGRID is the same as UGRID -> UGRID
         self.assertFalse(cf.regrid_logging())

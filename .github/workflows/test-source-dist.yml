@@ -14,11 +14,11 @@ jobs:
   source-dist-test:
     # Set-up the build matrix.
     # Note: only use one Python version, but it is easier to update in future
-    # by setting it here and refering to it as ${{ matrix.python-version }}.
+    # by setting it here and referring to it as ${{ matrix.python-version }}.
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ["3.8"]
+        os: [ubuntu-latest, macos-15-intel]
+        python-version: ["3.14"]
     runs-on: ${{ matrix.os }}
 
     # The sequence of tasks that will be executed as part of this job:
@@ -26,7 +26,7 @@ jobs:
     # Need to checkout the repo in order to build the source dist from it,
     # but don't install codebase directly in this case, only test the sdist.
     - name: Checkout cf-python
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
       with:
         path: main
 
@@ -35,21 +35,15 @@ jobs:
       run: echo Now setting up the environment for cf-python...
 
     - name: Checkout the current cfdm main to use as the dependency
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
       with:
         repository: NCAS-CMS/cfdm
         path: cfdm
 
-    # Prepare to test the source dist using the given Python version
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-
     # Setup conda, which is the simplest way to access all dependencies,
     # especially as some are C-based so otherwise difficult to setup.
     - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v4
       with:
         auto-update-conda: true
         miniconda-version: "latest"
@@ -70,15 +64,25 @@ jobs:
         pip --version
         pip list
 
+    # Ensure release optional dependencies are installed. We can skip 'twine'
+    # which is only needed for uploading the final source tarball to PyPI
+    # which we don't want to do in testing. But do need 'build'.
+    - name: Install dependencies required for release processes
+      shell: bash -l {0}
+      run: |
+        # Not available for 3.12+ on conda at least at present so use pip
+        pip install build
+
     # Install cf-python dependencies, excluding cfunits and cfdm, pre-testing
     # We do so with conda (and pip) which was setup in a previous step.
     - name: Install dependencies excluding the NCAS CF Data Tools libraries
       shell: bash -l {0}
       run: |
-        conda install -c ncas -c conda-forge cf-plot udunits2=2.2.25
+        conda install -c ncas -c conda-forge cf-plot udunits2
         conda install -c conda-forge mpich esmpy
         conda install scipy matplotlib dask
-        pip install pycodestyle
+        # Avoid pip unless cannot get from conda
+        pip install PyActiveStorage healpix pytest pycodestyle coverage
 
     # Install cfunits and cfdm (from development main branch) separately,
     # since it is most robust to test a no-dependency installation of cf, then
@@ -88,9 +92,9 @@ jobs:
       shell: bash -l {0}
       run: |
         pip install cfunits
-        cd ${{ github.workspace }}/cfdm
+        cd cfdm
         pip install -e .
-        cd ${{ github.workspace }}/main
+        cd ../main
         # This next (very meta) command is needed to install requirements.txt
         # spec (next) in the conda env rather than globally to the PYTHONPATH:
         conda install pip
@@ -108,23 +112,34 @@ jobs:
     # they are created and used on-the-fly by 'run_tests_and_coverage'.
     - name: Create netCDF test files, e.g. test_file.nc
       shell: bash -l {0}
+      working-directory: ${{ github.workspace }}/main/cf/test
       run: |
-        cd ${{ github.workspace }}/main/cf/test
-        python create_test_files.py
+        # Exit code 5 means no tests were found, which is expected for
+        # create_test_files.py. Allow that code but fail the workflow
+        # for any other non-zero exit code, to avoid hiding other failures.
+        python create_test_files.py || test $? -eq 5
         python setup_create_field.py
         ls -la
 
     - name: Create the source distribution and store the version as an env var
       shell: bash -l {0}
+      working-directory: ${{ github.workspace }}/main
       run: |
-        cd ${{ github.workspace }}/main
-        python setup.py sdist
+        # Previously 'python setup.py sdist', but this is now deprecated.
+        # Build with '--sdist' since we only want the source dist and not
+        # the wheel which would otherwise also be generated.
+        python -m build --sdist
         # Get the cf-python version and put it in an environment variable for
-        # the next step (only available in steps subsequent to one set in).
-        echo "CF_VERSION=$(python setup.py --version 2> /dev/null)" >> $GITHUB_ENV
+        # the next step (only available in steps subsequent to one set in)
+        # Use backticks here to avoid nested double quotes which break some
+        # syntax highlighting. More robust to query package metadata than
+        # the __version__ attribute.
+        CF_VERSION=`python -c 'from importlib.metadata import version; print(version("cf-python"))'`
+        echo "CF_VERSION=${CF_VERSION}" >> $GITHUB_ENV
 
     - name: Test the source distribution
       shell: bash -l {0}
+      working-directory: ${{ github.workspace }}/main
       run: |
         cd ${{ github.workspace }}/main
         ./test_release $CF_VERSION

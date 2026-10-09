@@ -32,7 +32,7 @@ Windows Subsystem for Linux (WSL)
 **Python versions**
 -------------------
 
-The cf package is only for Python 3.10 or newer.
+The cf package is only for Python 3.11 or newer.
 
 ----
 

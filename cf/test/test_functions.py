@@ -4,10 +4,12 @@ import os
 import platform
 import sys
 import unittest
+from importlib.metadata import requires
 from importlib.util import find_spec
 
 import dask.array as da
 import numpy as np
+from packaging.requirements import Requirement
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -286,87 +288,44 @@ class functionTest(unittest.TestCase):
         self.assertIs(c._func, cf.configuration)
 
     def test_environment(self):
+        """Test the `environment` function."""
         e = cf.environment(display=False)
         ep = cf.environment(display=False, paths=False)
 
-        # Basic structure
         self.assertIsInstance(e, list)
         self.assertIsInstance(ep, list)
-        self.assertEqual(len(e), len(ep))
-        self.assertTrue(all(isinstance(s, str) for s in e))
-        self.assertTrue(all(isinstance(s, str) for s in ep))
 
-        # Extract component names
-        names_e = [s.split(":")[0] for s in e]
-        names_ep = [s.split(":")[0] for s in ep]
+        # Test some specific components including their paths
+        components = ["Platform: ", "netCDF4: ", "numpy: ", "cftime: "]
+        for component in components:
+            self.assertTrue(any(s.startswith(component) for s in e))
+            self.assertTrue(any(s.startswith(component) for s in ep))
+        for component in [
+            f"cf: {cf.__version__} {os.path.abspath(cf.__file__)}",
+            f"Python: {platform.python_version()} {sys.executable}",
+        ]:
+            self.assertIn(component, e)
+            self.assertNotIn(component, ep)  # paths shouldn't be present here
+        for component in [
+            f"cf: {cf.__version__}",
+            f"Python: {platform.python_version()}",
+        ]:
+            self.assertIn(component, ep)
 
-        # Expected full set of components
-        expected = [
-            "HDF5 library",
-            "Platform",
-            "Python",
-            "activestorage",
-            "cartopy",
-            "cf",
-            "cfdm",
-            "cfdm.core",
-            "cfplot",
-            "cftime",
-            "cfunits",
-            "dask",
-            "distributed",
-            "esmpy/ESMF",
-            "fsspec",
-            "h5netcdf",
-            "h5py",
-            "healpix",
-            "matplotlib",
-            "netCDF4",
-            "netcdf library",
-            "numpy",
-            "packaging",
-            "psutil",
-            "pyfive",
-            "pyproj",
-            "scipy",
-            "udunits2 library",
-            "umfive",
-            "uritools",
-            "xarray",
-            "xnetcdf",
-            "zarr",
-        ]
-
-        # Ensure all expected components are present
-        self.assertEqual(sorted(names_e), sorted(expected))
-        self.assertEqual(sorted(names_ep), sorted(expected))
-
-        # Specific known entries (sanity checks)
-        self.assertIn(
-            f"Python: {platform.python_version()} {sys.executable}", e
-        )
-        self.assertTrue(
-            any(
-                s.startswith(f"Python: {platform.python_version()}")
-                for s in ep
-            )
-        )
-
-        self.assertIn(
-            f"cf: {cf.__version__} {os.path.abspath(cf.__file__)}", e
-        )
-        self.assertIn(f"cf: {cf.__version__}", ep)
-
-        # Each entry without paths should match the start of the
-        # corresponding entry with paths
-        for full, short in zip(e, ep):
-            name_full, val_full = full.split(": ", 1)
-            name_short, val_short = short.split(": ", 1)
-
-            self.assertEqual(name_full, name_short)
+        # Ensure all hard dependencies are reported on, to help keep
+        # the environment function output up to date
+        cf_hard_dependencies = {
+            req.name
+            for req in map(Requirement, requires("cf-python") or [])
+            if not req.marker or "extra" not in str(req.marker)
+        }  # get as a set for subset comparison later
+        for output in (e, ep):
+            dep_names = set()
+            for entry in output:
+                dep_names.add(entry.split(":")[0])
             self.assertTrue(
-                val_full.startswith(val_short),
-                msg=f"Mismatch for {name_full}: '{val_full}' vs '{val_short}'",
+                cf_hard_dependencies.issubset(dep_names),
+                f"Missing dependencies: {cf_hard_dependencies - dep_names}",
             )
 
     def test_indices_shape(self):

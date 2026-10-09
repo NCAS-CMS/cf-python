@@ -1101,13 +1101,17 @@ class DataTest(unittest.TestCase):
         # ...when joining along axis=0 (the default)
         self.assertEqual(d.cyclic(), {0, 1})
         with self.assertLogs(level=-1) as catch:
-            f = cf.Data.concatenate([d, e])
-            self.assertTrue(
-                any(
-                    "Concatenating along a cyclic axis (0)" in log_msg
-                    for log_msg in catch.output
+            # 'verbose' kwarg isn't available on concatenate method so need to
+            # set log level globally:
+            with cf.log_level(-1):
+                f = cf.Data.concatenate([d, e])
+                self.assertTrue(
+                    any(
+                        "Concatenating along a cyclic axis (0)" in log_msg
+                        for log_msg in catch.output
+                    )
                 )
-            )
+
         self.assertEqual(f.cyclic(), {1})
 
         self.assertEqual(f.shape, f_np.shape)
@@ -1118,13 +1122,16 @@ class DataTest(unittest.TestCase):
 
         self.assertEqual(d.cyclic(), {0, 1})
         with self.assertLogs(level=-1) as catch:
-            f = cf.Data.concatenate([d, e], axis=1)
-            self.assertTrue(
-                any(
-                    "Concatenating along a cyclic axis (1)" in log_msg
-                    for log_msg in catch.output
+            # 'verbose' kwarg isn't available on concatenate method so need to
+            # set log level globally:
+            with cf.log_level(-1):
+                f = cf.Data.concatenate([d, e], axis=1)
+                self.assertTrue(
+                    any(
+                        "Concatenating along a cyclic axis (1)" in log_msg
+                        for log_msg in catch.output
+                    )
                 )
-            )
         self.assertEqual(f.cyclic(), {0})
 
         self.assertEqual(f.shape, f_np.shape)

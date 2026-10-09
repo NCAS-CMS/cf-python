@@ -3,7 +3,7 @@ import platform
 import warnings
 from collections.abc import Iterable
 from functools import lru_cache, partial
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 from importlib.util import find_spec
 from itertools import product
 from os import mkdir
@@ -3113,6 +3113,14 @@ def environment(display=True, paths=True):
     # Get cfdm env
     out = cfdm.environment(display=False, paths=paths)
 
+    # Healpix module doesn't define a __version__, so can't as standard use
+    # _get_module_info, but I have opened an Issue with them to define
+    # this (see: https://github.com/ntessore/healpix/issues/108)
+    try:
+        healpix_spec = (version("healpix"), find_spec("healpix").origin)
+    except PackageNotFoundError:
+        healpix_spec = ("not available", "")  # as with _get_module_info fail
+
     _get_module_info = cfdm.functions._get_module_info
     dependency_version_paths_mapping = {
         "esmpy/ESMF": (
@@ -3124,10 +3132,7 @@ def environment(display=True, paths=True):
         "cartopy": _get_module_info("cartopy", try_except=True),
         "cfplot": _get_module_info("cfplot", try_except=True),
         "cf": (__version__, _os_path_abspath(__file__)),
-        # Healpix module doesn't define a __version__, so can't as standard use
-        # _get_module_info, but I have opened an Issue with them to define
-        # this (see: https://github.com/ntessore/healpix/issues/108)
-        "healpix": (version("healpix"), find_spec("healpix").origin),
+        "healpix": healpix_spec,
         "pyproj": _get_module_info("pyproj", try_except=True),
     }
     string = "{0}: {1!s}"
