@@ -1,0 +1,7 @@
+cf.rtol
+=======
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.rtol

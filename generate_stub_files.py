@@ -21,64 +21,42 @@ OUT_DIR = SOURCE_DIR.parent
 
 def generate_stub_files(rst_path: Path):
     content = rst_path.read_text(encoding="utf-8")
-    if not content.endswith("\n"):
-        content += "\n"
 
-    # Regular expression to match autosummary blocks
-    # Matches: .. autosummary::
-    #          [indented block of options and entries]
-    # The block regex uses mutually exclusive branches to prevent
-    # catastrophic backtracking:
-    # 1. [ \t]+\S[^\n]*\n -> indented line with at least one non-whitespace char
-    # 2. [ \t]*\n         -> blank line or line with only whitespace
-    autosummary_pattern = re.compile(
-        r"^[ \t]*\.\.\s+autosummary::[^\n]*\n"
-        r"(?P<block>(?:[ \t]+\S[^\n]*\n|[ \t]*\n)*)",
-        re.MULTILINE
+    # Regular expression to match rubric sections and their
+    # autosummary entries
+    #
+    # Matches: .. rubric:: (Methods|Attributes) ... .. autosummary:: ... [entries]
+    section_pattern = re.compile(
+        r"\.\.\s+rubric::\s+(Methods|Attributes)\s*?\n"
+        r"(?:[^\n]*\n)*?"  # skip options until entries
+        r"\.\.\s+autosummary::.*?\n\n"
+        r"((?:\s+~[\w\.\_]+\n)+)",
+        re.MULTILINE | re.DOTALL,
     )
 
-    for match in autosummary_pattern.finditer(content):
-        block = match.group("block")
+    for match in section_pattern.finditer(content):
+        member_type = match.group(1).lower()  # 'methods' or 'attributes'
+        raw_entries = match.group(2)
 
-        toctree_match = re.search(r"^[ \t]+:toctree:[ \t]+(\S+)", block, re.MULTILINE)
-        if not toctree_match:
-            continue
-
-        toctree = toctree_match.group(1).strip("/")
-        toctree = toctree.split("/")[-1]  # e.g. '../method' -> 'method'
-
-        if toctree == "method":
-            directive = "automethod"
-            out_dir = OUT_DIR / "method"
-        elif toctree == "attribute":
-            directive = "autoattribute"
-            out_dir = OUT_DIR / "attribute"
-        elif toctree == "function":
-            directive = "autofunction"
-            out_dir = OUT_DIR / "function"
-        else:
-            continue
-
-        out_dir.mkdir(parents=True, exist_ok=True)
-
-        # Extract fully qualified names, ignoring comments and options
-        entries = []
-        for line in block.splitlines():
-            line = line.strip()
-            if not line or line.startswith("..") or line.startswith(":"):
-                continue
-            # Remove leading ~ if present
-            if line.startswith("~"):
-                line = line[1:]
-            # Ensure it looks like a cf object
-            if not line.startswith("cf."):
-                continue
-            
-            entry_match = re.match(r"([\w\.\_]+)", line)
-            if entry_match:
-                entries.append(entry_match.group(1))
+        # Extract fully qualified names (e.g.,
+        # 'cf.AuxiliaryCoordinate.del_properties')
+        entries = re.findall(r"~\s*([\w\.\_]+)", raw_entries)
 
         for entry in entries:
+            # Determine directive (automethod vs autoattribute)
+            if member_type == "methods":
+                directive = "automethod"
+            else:
+                directive = "autoattribute"
+
+            # Determine output directory (method/ or attribute/)
+            if member_type == "methods":
+                out_dir = OUT_DIR / "method"
+            else:
+                out_dir = OUT_DIR / "attribute"
+
+            out_dir.mkdir(parents=True, exist_ok=True)
+
             out_file = out_dir / f"{entry}.rst"
 
             # Format underline to match title length
@@ -96,14 +74,8 @@ def generate_stub_files(rst_path: Path):
             print(f"    Generated: {out_file}")
 
 
-# Run over all class rst files and function.rst
+# Run over all class rst files
 if __name__ == "__main__":
-    rst_files = list(SOURCE_DIR.glob("*.rst"))
-    
-    function_rst = OUT_DIR / "function.rst"
-    if function_rst.exists():
-        rst_files.append(function_rst)
-
-    for rst_file in sorted(rst_files):
+    for rst_file in sorted(SOURCE_DIR.glob("*.rst")):
         print(f"Parent rst file: {rst_file}")
         generate_stub_files(rst_file)
