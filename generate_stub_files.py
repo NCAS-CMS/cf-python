@@ -26,21 +26,21 @@ def generate_stub_files(rst_path: Path):
 
     # Regular expression to match autosummary blocks
     # Matches: .. autosummary::
-    #          [indented options/text]
-    #          [blank line]
-    #          [indented entries]
+    #          [indented block of options and entries]
+    # The block regex uses mutually exclusive branches to prevent
+    # catastrophic backtracking:
+    # 1. [ \t]+\S[^\n]*\n -> indented line with at least one non-whitespace char
+    # 2. [ \t]*\n         -> blank line or line with only whitespace
     autosummary_pattern = re.compile(
-        r"\.\.\s+autosummary::[^\n]*\n"
-        r"(?P<options>(?:[ \t]+[^\n]*\n)*)\n"
-        r"(?P<entries>(?:(?:[ \t]+[^\n]*\n)|(?:[ \t]*\n))*)",
+        r"^[ \t]*\.\.\s+autosummary::[^\n]*\n"
+        r"(?P<block>(?:[ \t]+\S[^\n]*\n|[ \t]*\n)*)",
         re.MULTILINE
     )
 
     for match in autosummary_pattern.finditer(content):
-        options = match.group("options")
-        entries_str = match.group("entries")
+        block = match.group("block")
 
-        toctree_match = re.search(r"^[ \t]+:toctree:[ \t]+(\S+)", options, re.MULTILINE)
+        toctree_match = re.search(r"^[ \t]+:toctree:[ \t]+(\S+)", block, re.MULTILINE)
         if not toctree_match:
             continue
 
@@ -61,11 +61,11 @@ def generate_stub_files(rst_path: Path):
 
         out_dir.mkdir(parents=True, exist_ok=True)
 
-        # Extract fully qualified names, ignoring comments
+        # Extract fully qualified names, ignoring comments and options
         entries = []
-        for line in entries_str.splitlines():
+        for line in block.splitlines():
             line = line.strip()
-            if not line or line.startswith(".."):
+            if not line or line.startswith("..") or line.startswith(":"):
                 continue
             # Remove leading ~ if present
             if line.startswith("~"):
