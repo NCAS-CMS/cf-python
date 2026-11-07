@@ -3,6 +3,9 @@ Version NEXTVERSION
 
 **2026-10-??**
 
+* Allow a sequence as input to `cf.year`, `cf.month`, `cf.day`,
+  `cf.hour`, `cf.minute`, and `cf.second`
+  (https://github.com/NCAS-CMS/cf-python/issues/974)
 * Fix problems creating CFA variables with `cf.write` from
   aggregation-promoted field ancillaries
   (https://github.com/NCAS-CMS/cf-python/issues/971)
