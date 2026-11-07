@@ -278,25 +278,83 @@ class QueryTest(unittest.TestCase):
             )
         )
         self.assertTrue(
+            (d == cf.year([2000])).equals(
+                cf.Data([[True, False], [False, True]])
+            )
+        )
+        self.assertTrue(
+            (d == cf.year([2000, 2001])).equals(
+                cf.Data([[True, True], [True, True]])
+            )
+        )
+        self.assertTrue(
             (d == cf.month(12)).equals(cf.Data([[True, False], [False, True]]))
+        )
+        self.assertTrue(
+            (d == cf.month([12])).equals(
+                cf.Data([[True, False], [False, True]])
+            )
+        )
+        self.assertTrue(
+            (d == cf.month([12, 1])).equals(
+                cf.Data([[True, True], [True, True]])
+            )
         )
         self.assertTrue(
             (d == cf.day(3)).equals(cf.Data([[False, True], [False, False]]))
         )
-        d = cf.Data([[1.0, 5], [6, 2]], "hours since 2000-12-29 21:57:57")
+        self.assertTrue(
+            (d == cf.day([3])).equals(cf.Data([[False, True], [False, False]]))
+        )
+        self.assertTrue(
+            (d == cf.day([3, 30])).equals(
+                cf.Data([[True, True], [False, False]])
+            )
+        )
+        d = cf.Data([[1.0, 5], [6, 2]], "hours since 2000-12-29 21:58:59")
         self.assertTrue(
             (d == cf.hour(2)).equals(cf.Data([[False, True], [False, False]]))
         )
-        d = cf.Data([[1.0, 5], [6, 2]], "minutes since 2000-12-29 21:57:57")
         self.assertTrue(
-            (d == cf.minute(2)).equals(
+            (d == cf.hour([2])).equals(
                 cf.Data([[False, True], [False, False]])
             )
         )
-        d = cf.Data([[1.0, 5], [6, 2]], "seconds since 2000-12-29 21:57:57")
         self.assertTrue(
-            (d == cf.second(2)).equals(
-                cf.Data([[False, True], [False, False]])
+            (d == cf.hour([2, 3])).equals(
+                cf.Data([[False, True], [True, False]])
+            )
+        )
+        d = cf.Data([[1.0, 5], [6, 2]], "minutes since 2000-12-29 21:58:59")
+        self.assertTrue(
+            (d == cf.minute(59)).equals(
+                cf.Data([[True, False], [False, False]])
+            )
+        )
+        self.assertTrue(
+            (d == cf.minute([59])).equals(
+                cf.Data([[True, False], [False, False]])
+            )
+        )
+        self.assertTrue(
+            (d == cf.minute([59, 0])).equals(
+                cf.Data([[True, False], [False, True]])
+            )
+        )
+        d = cf.Data([[1.0, 5], [6, 2]], "seconds since 2000-12-29 21:58:59")
+        self.assertTrue(
+            (d == cf.second(0)).equals(
+                cf.Data([[True, False], [False, False]])
+            )
+        )
+        self.assertTrue(
+            (d == cf.second([0])).equals(
+                cf.Data([[True, False], [False, False]])
+            )
+        )
+        self.assertTrue(
+            (d == cf.second([0, 1])).equals(
+                cf.Data([[True, False], [False, True]])
             )
         )
         d = cf.Data([[1.0, 5.0], [6, 2]], "days since 2000-12-29 21:57:57")

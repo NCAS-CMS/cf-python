@@ -1974,6 +1974,24 @@ def contains(value, units=None):
     )
 
 
+def _YMDhms(value, attr):
+    """Worker function for time duration functions.
+
+     See `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
+    `cf.second` for details.
+
+     .. versionadded:: NEXTVERSION
+
+    """
+    if isinstance(value, Query):
+        return value.addattr(attr)
+
+    if np.array(value).ndim == 1:
+        return Query("set", value, attr=attr)
+
+    return Query("eq", value, attr=attr)
+
+
 def year(value):
     """A `Query` object for a "year" condition.
 
@@ -1984,7 +2002,10 @@ def year(value):
     :Parameter:
 
         value:
-            The query condition's value.
+            The query condition's value. If *value* is a sequence then
+            it is automatically converted to a "member of set"
+            condition for the values, e.g. ``[1959, 1961]`` is
+            equivalent to ``cf.set([1959, 1961])``.
 
     :Returns:
 
@@ -2002,12 +2023,13 @@ def year(value):
     False
     >>> d == cf.year(cf.wi(2003, 2006))
     False
+    >>> d == cf.year([2002, 2006])
+    True
+    >>> d == cf.year(cf.set([2002, 2006]))
+    True
 
     """
-    if isinstance(value, Query):
-        return value.addattr("year")
-    else:
-        return Query("eq", value, attr="year")
+    return _YMDhms(value, "year")
 
 
 def month(value):
@@ -2020,7 +2042,10 @@ def month(value):
     :Parameter:
 
         value:
-            The query condition's value.
+            The query condition's value. If *value* is a sequence then
+            it is automatically converted to a "member of set"
+            condition for the values, e.g. ``[12, 1]`` is equivalent
+            to ``cf.set([12, 1])``.
 
     :Returns:
 
@@ -2038,12 +2063,13 @@ def month(value):
     False
     >>> d == cf.month(cf.wi(1, 6))
     True
+    >>> d == cf.month([5, 6])
+    True
+    >>> d == cf.month(cf.set([5, 6]))
+    True
 
     """
-    if isinstance(value, Query):
-        return value.addattr("month")
-    else:
-        return Query("eq", value, attr="month")
+    return _YMDhms(value, "month")
 
 
 def day(value):
@@ -2056,7 +2082,10 @@ def day(value):
     :Parameter:
 
         value:
-            The query condition's value.
+            The query condition's value. If *value* is a sequence then
+            it is automatically converted to a "member of set"
+            condition for the values, e.g. ``[12, 1]`` is equivalent
+            to ``cf.set([12, 1])``.
 
     :Returns:
 
@@ -2074,12 +2103,13 @@ def day(value):
     False
     >>> d == cf.day(cf.wi(1, 21))
     True
+    >>> d == cf.day([5, 16])
+    True
+    >>> d == cf.day(cf.set([5, 16]))
+    True
 
     """
-    if isinstance(value, Query):
-        return value.addattr("day")
-    else:
-        return Query("eq", value, attr="day")
+    return _YMDhms(value, "day")
 
 
 def hour(value):
@@ -2092,7 +2122,10 @@ def hour(value):
     :Parameter:
 
         value:
-            The query condition's value.
+            The query condition's value. If *value* is a sequence then
+            it is automatically converted to a "member of set"
+            condition for the values, e.g. ``[12, 1]`` is equivalent
+            to ``cf.set([12, 1])``.
 
     :Returns:
 
@@ -2131,12 +2164,13 @@ def hour(value):
     False
     >>> d == cf.hour(cf.wi(6, 23))
     True
+    >>> d == cf.hour([5, 18])
+    True
+    >>> d == cf.hour(cf.set([5, 18]))
+    True
 
     """
-    if isinstance(value, Query):
-        return value.addattr("hour")
-    else:
-        return Query("eq", value, attr="hour")
+    return _YMDhms(value, "hour")
 
 
 def minute(value):
@@ -2149,7 +2183,10 @@ def minute(value):
     :Parameter:
 
         value:
-            The query condition's value.
+            The query condition's value. If *value* is a sequence then
+            it is automatically converted to a "member of set"
+            condition for the values, e.g. ``[12, 1]`` is equivalent
+            to ``cf.set([12, 1])``.
 
     :Returns:
 
@@ -2167,12 +2204,13 @@ def minute(value):
     False
     >>> d == cf.minute(cf.wi(15, 45))
     True
+    >>> d == cf.minute([5, 30])
+    True
+    >>> d == cf.minute(cf.set([5, 30]))
+    True
 
     """
-    if isinstance(value, Query):
-        return value.addattr("minute")
-    else:
-        return Query("eq", value, attr="minute")
+    return _YMDhms(value, "minute")
 
 
 def second(value):
@@ -2185,7 +2223,10 @@ def second(value):
     :Parameter:
 
         value:
-            The query condition's value.
+            The query condition's value. If *value* is a sequence then
+            it is automatically converted to a "member of set"
+            condition for the values, e.g. ``[12, 1]`` is equivalent
+            to ``cf.set([12, 1])``.
 
     :Returns:
 
@@ -2203,12 +2244,13 @@ def second(value):
     False
     >>> d == cf.second(cf.wi(0, 30))
     True
+    >>> d == cf.second([5, 0])
+    True
+    >>> d == cf.second(cf.set([5, 0]))
+    True
 
     """
-    if isinstance(value, Query):
-        return value.addattr("second")
-    else:
-        return Query("eq", value, attr="second")
+    return _YMDhms(value, "second")
 
 
 def cellsize(value, units=None):
