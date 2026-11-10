@@ -1,0 +1,7 @@
+cf.contains
+===========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.contains
