@@ -148,6 +148,10 @@ The following file types can be read:
 
 ..
 
+* In memory `xarray` datasets (see also `cf.from_xarray`).
+
+..
+
 Note that when reading netCDF4 files that contain :ref:`hierachical
 groups <Hierarchical-groups>`, the group structure is saved via the
 :ref:`netCDF interface <NetCDF-interface>` so that it may be re-used,

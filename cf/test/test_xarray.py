@@ -31,47 +31,18 @@ class xarrayTest(unittest.TestCase):
 
         # Write each field to a different xarray dataset
         for f in fields:
-            ds = f.to_xarray()
+            ds = cf.to_xarray(f)
             self.assertIsInstance(ds, xr.Dataset)
-            str(ds)
             self.assertIn("Conventions", ds.attrs)
+            str(ds)
 
         # Write all fields to one xarray dataset
-        ds = cf.write(fields, fmt="XARRAY")
+        ds = cf.to_xarray(fields)
         self.assertIsInstance(ds, xr.Dataset)
         str(ds)
 
-    def test_Domain_to_xarray(self):
-        """Test Domain.to_xarray."""
-        domains = [f.domain for f in cf.example_fields()]
-
-        # Write each domain to a different xarray dataset
-        for d in domains:
-            ds = d.to_xarray()
-            self.assertIsInstance(ds, xr.Dataset)
-            str(ds)
-
-        # Write all domains to one xarray dataset
-        ds = cf.write(domains, fmt="XARRAY")
-        self.assertIsInstance(ds, xr.Dataset)
-        str(ds)
-
-    def test_FieldList_to_xarray(self):
-        """Test FieldList.to_xarray."""
-        fields = cf.example_fields()
-        ds = fields.to_xarray()
-        self.assertIsInstance(ds, xr.Dataset)
-        str(ds)
-
-    def test_DomainList_to_xarray(self):
-        """Test DomainList.to_xarray."""
-        domains = cf.DomainList([f.domain for f in cf.example_fields()])
-        ds = domains.to_xarray()
-        self.assertIsInstance(ds, xr.Dataset)
-        str(ds)
-
-    def test_FieldList_to_xarray_from_disk(self):
-        """Test FieldList.to_xarray from datasets read from disk."""
+    def test_Field_to_xarray_from_disk(self):
+        """Test Field.to_xarray on datasets read from disk."""
         for dataset in (
             "example_field_0.nc",
             "example_field_0.zarr2",
@@ -96,13 +67,9 @@ class xarrayTest(unittest.TestCase):
             "ugrid_2.nc",
             "ugrid_3.nc",
             "test_file.nc",
-            "extra_data.pp",
-            "file1.pp",
-            "umfile.pp",
-            "wgdos_packed.pp",
         ):
             f = cf.read(dataset)
-            ds = f.to_xarray()
+            ds = cf.to_xarray(f)
             self.assertIsInstance(ds, xr.Dataset)
             str(ds)
 
@@ -111,17 +78,17 @@ class xarrayTest(unittest.TestCase):
         f = cf.example_field(0)
         g = f.copy()
 
-        ds = f.to_xarray()
+        ds = cf.to_xarray(f)
         self.assertIsInstance(ds, xr.Dataset)
 
         f.nc_set_variable("/forecast/model/q2")
-        ds = f.to_xarray()
+        ds = cf.to_xarray(f)
         self.assertIsInstance(ds, xr.DataTree)
         self.assertIn("q2", ds["/forecast/model"])
         str(ds)
 
         # group=True
-        ds = cf.write([f, g], fmt="XARRAY")
+        ds = cf.to_xarray([f, g])
         self.assertIsInstance(ds, xr.DataTree)
         str(ds)
 
@@ -129,46 +96,54 @@ class xarrayTest(unittest.TestCase):
         self.assertIn("q2", ds["/forecast/model"])
 
         # group=False
-        ds = f.to_xarray(group=False)
+        ds = cf.to_xarray(f, group=False)
         self.assertIsInstance(ds, xr.Dataset)
         self.assertIn("q2", ds)
         str(ds)
 
-        ds = cf.write([f, g], fmt="XARRAY", group=False)
+        ds = cf.to_xarray([f, g], group=False)
         self.assertIsInstance(ds, xr.Dataset)
         str(ds)
 
         self.assertIn("q", ds)
         self.assertIn("q2", ds)
 
-    def test_FieldList_to_xarray_groups(self):
-        """Test FieldList.to_xarray with groups."""
-        f = cf.example_fields(0)
+    def test_write_xarray_external(self):
+        """Test cf.write with xarray and external file."""
+        f = cf.example_field(0)
+        with self.assertRaises(ValueError):
+            cf.write(f, fmt="XARRAY", external="file.nc")
 
-        ds = f.to_xarray()
+    def test_from_xarray(self):
+        """Test cf.from_xarray."""
+        # These fields round trip OK!
+        f = cf.example_fields(0, 2, 5, 7, 12, 13)
+        ds = cf.to_xarray(f)
+        g = cf.from_xarray(ds)
+        self.assertEqual(len(f), len(g))
+        self.assertIsInstance(g, cf.FieldList)
+
+        f = sorted(f, key=lambda x: x.get_property("standard_name"))
+        g = sorted(g, key=lambda x: x.get_property("standard_name"))
+        self.assertEqual(
+            [field1.equals(field0) for field0, field1 in zip(f, g)],
+            [True] * len(f),
+        )
+
+    def test_to_xarray_domain(self):
+        """Test cf.to_xarray with domain."""
+        domains = [f.domain for f in cf.example_fields()]
+
+        # Write each domain to a different xarray dataset
+        for d in domains:
+            ds = cf.to_xarray(d)
+            self.assertIsInstance(ds, xr.Dataset)
+            str(ds)
+
+        # Write all domains to one xarray dataset
+        ds = cf.to_xarray(domains)
         self.assertIsInstance(ds, xr.Dataset)
-
-        f[0].nc_set_variable("/forecast/model/q2")
-        ds = f.to_xarray()
-        self.assertIsInstance(ds, xr.DataTree)
-        self.assertIn("q2", ds["/forecast/model"])
         str(ds)
-
-        ds = f.to_xarray(group=False)
-        self.assertIsInstance(ds, xr.Dataset)
-        self.assertIn("q2", ds)
-        str(ds)
-
-    def test_Field_to_xarray_aggregation(self):
-        """Test Field.to_xarray with aggregated data."""
-        f = cf.read("example_field_0.nc")[0]
-        dsf = f.to_xarray()
-
-        self.assertEqual(f.shape[0], 5)
-        g = cf.aggregate([f[:3], f[3:]])[0]
-        dsg = g.to_xarray()
-
-        self.assertTrue(dsg.equals(dsf))
 
 
 if __name__ == "__main__":
