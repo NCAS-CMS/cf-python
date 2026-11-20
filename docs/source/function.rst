@@ -32,6 +32,17 @@ Aggregation
    cf.aggregate
    cf.climatology_cells
 
+Conversion from and to xarray
+-----------------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: function/
+   :template: function.rst
+
+   cf.from_xarray
+   cf.to_xarray
+
 .. _functions-mathematical-operations:
 
 Mathematical operations

@@ -1,8 +1,11 @@
 Version NEXTVERSION
 --------------
 
-**2026-10-??**
+**2026-11-??**
 
+* New package-level functions to convert from and to `xarray`:
+  `cf.from_xarray` and `cf.to_xarray`
+  (https://github.com/NCAS-CMS/cf-python/issues/978)
 * Allow a sequence as input to `cf.year`, `cf.month`, `cf.day`,
   `cf.hour`, `cf.minute`, and `cf.second`
   (https://github.com/NCAS-CMS/cf-python/issues/974)
