@@ -189,6 +189,7 @@ from .read_write import read, write
 from .regrid import RegridOperator
 
 from .xarray_utils import from_xarray, to_xarray
+from .iris_utils import from_iris, to_iris
 
 # Set up basic logging for the full project with a root logger
 import logging

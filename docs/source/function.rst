@@ -32,8 +32,8 @@ Aggregation
    cf.aggregate
    cf.climatology_cells
 
-Conversion from and to xarray
------------------------------
+Conversion from and to xarray and iris
+--------------------------------------
 
 .. autosummary::
    :nosignatures:
@@ -42,6 +42,8 @@ Conversion from and to xarray
 
    cf.from_xarray
    cf.to_xarray
+   cf.from_iris
+   cf.to_iris
 
 .. _functions-mathematical-operations:
 
