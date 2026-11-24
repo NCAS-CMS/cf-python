@@ -1,4 +1,4 @@
-from ..functions import _DEPRECATION_ERROR_ARG
+from ..functions import _DEPRECATION_ERROR_ARG, _DEPRECATION_ERROR_METHOD
 
 
 class FieldDomainList:
@@ -335,31 +335,14 @@ class FieldDomainList:
     def to_xarray(self, group=True):
         """Convert the list elements to an `xarray` Dataset.
 
-        {{cf_xarray description}}
-
-        Note that ``ds = fl.to_xarray()`` is identical to ``ds =
-        cf.write(fl, fmt='XARRAY')``. Also, `cfdm.write` allows a
-        mixture of fields and domains to be written to the
-        same `xarray` dataset.
-
-        .. versionadded:: 3.21.0
-
-        .. seealso:: `cf.write`
-
-        :Parameter:
-
-            group: `bool`, optional
-                If False then create a "flat" dataset, i.e. one with
-                only the root group, regardless of any group structure
-                specified by the netCDF interfaces of the list
-                elements and their components. If True (the default)
-                then any sub-groups will be created and populated.
-
-        :Returns:
-
-            {{Returns xarray}}
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `cf.to_xarray` instead.
 
         """
-        from cf.read_write import write
-
-        return write(self, fmt="XARRAY", group=group)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "to_xarray",
+            version="NEXTVERSION",
+            removed_at="4.0.0",
+            message="Use the 'cf.to_xarray' function instead.",
+        )  # pragma: no cover
