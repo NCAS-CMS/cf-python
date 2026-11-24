@@ -26,7 +26,7 @@ class xarrayTest(unittest.TestCase):
         # cf.log_level('DISABLE')
 
     def test_Field_to_xarray(self):
-        """Test Field.to_xarray."""
+        """Test cf.to_xarray."""
         fields = cf.example_fields()
 
         # Write each field to a different xarray dataset
@@ -42,7 +42,7 @@ class xarrayTest(unittest.TestCase):
         str(ds)
 
     def test_Field_to_xarray_from_disk(self):
-        """Test Field.to_xarray on datasets read from disk."""
+        """Test cf.to_xarray on datasets read from disk."""
         for dataset in (
             "example_field_0.nc",
             "example_field_0.zarr2",
@@ -74,7 +74,7 @@ class xarrayTest(unittest.TestCase):
             str(ds)
 
     def test_Field_to_xarray_groups(self):
-        """Test Field.to_xarray with groups."""
+        """Test cf.to_xarray with groups."""
         f = cf.example_field(0)
         g = f.copy()
 
