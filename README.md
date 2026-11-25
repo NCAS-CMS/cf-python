@@ -120,7 +120,7 @@ possible, are available with the [cf-plot
 package](https://ncas-cms.github.io/cf-plot), which needs to be
 installed separately to the `cf` package.
 
-![Example outputs of cf-plot displaying selected aspects of `cf` field constructs](docs/source/images/new_gallery_view.png)
+![Example outputs of cf-plot displaying selected aspects of `cf` field constructs](docs/source/images/gallery_v360plus.png)
 
 Command line utilities
 ======================
