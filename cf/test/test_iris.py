@@ -15,7 +15,7 @@ except ImportError:
 import cf
 
 
-class xarrayTest(unittest.TestCase):
+class irisTest(unittest.TestCase):
     """Unit test for converting to and from iris."""
 
     def setUp(self):
@@ -32,8 +32,8 @@ class xarrayTest(unittest.TestCase):
         # cf.log_level('DISABLE')
 
     @unittest.skipIf(not ok, "requires iris, xarray, and ncdata")
-    def test_Field_to_iris(self):
-        """Test Field.to_iris."""
+    def test_to_iris(self):
+        """Test cf.to_iris."""
         fields = cf.example_fields()
 
         # Write each field to a different xarray dataset
@@ -49,8 +49,8 @@ class xarrayTest(unittest.TestCase):
         str(c)
 
     @unittest.skipIf(not ok, "requires iris, xarray, and ncdata")
-    def test_Field_to_iris_from_disk(self):
-        """Test Field.to_iris on datasets read from disk."""
+    def test_to_iris_from_disk(self):
+        """Test cf.to_iris on datasets read from disk."""
         for dataset in (
             "example_field_0.nc",
             "example_field_0.zarr2",
