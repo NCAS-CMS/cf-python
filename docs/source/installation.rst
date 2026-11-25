@@ -324,7 +324,6 @@ environments for which these features are not required.
   newer. This package is required to create 2-d latitude and longitude
   coordinates from grid mappings.
 
-
 ----
 
 .. _Tests:

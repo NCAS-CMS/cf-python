@@ -3,6 +3,9 @@ Version NEXTVERSION
 
 **2026-11-??**
 
+* New package-level functions to convert from and to `iris`:
+  `cf.from_iris` and `cf.to_iris`
+  (https://github.com/NCAS-CMS/cf-python/issues/979)
 * New package-level functions to convert from and to `xarray`:
   `cf.from_xarray` and `cf.to_xarray`
   (https://github.com/NCAS-CMS/cf-python/issues/978)
@@ -13,6 +16,7 @@ Version NEXTVERSION
   aggregation-promoted field ancillaries
   (https://github.com/NCAS-CMS/cf-python/issues/971)
 * Changed dependency: ``Python>=3.11.0``
+* New optional dependency: ``ncdata>=0.4.0``
 
 ----
 
