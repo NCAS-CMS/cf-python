@@ -97,7 +97,9 @@ The `cf` package can:
 * read and write data that are quantized to eliminate false
   precision,
 
-* convert field and domain constructs to `xarray` datasets in memory,
+* convert field and domain constructs from and to `xarray` datasets in memory,
+
+* convert field and domain constructs from and to `iris` cubes,
 
 * inspect field constructs,
 

@@ -209,7 +209,7 @@ installed, which:
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.10.0 or newer.
+* `Python <https://www.python.org/>`_, 3.11.0 or newer.
 
 * `numpy <http://www.numpy.org>`_, versions 2.0.0 or newer.
 
@@ -227,8 +227,8 @@ Required
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.13.3.0 or up to,
-  but not including, 1.13.4.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.13.4.0 or up to,
+  but not including, 1.13.5.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.7 or newer.
 
@@ -323,6 +323,12 @@ environments for which these features are not required.
 * `pyproj <https://pypi.org/project/pyproj>`_, version 3.7.2 or
   newer. This package is required to create 2-d latitude and longitude
   coordinates from grid mappings.
+
+.. rubric:: Conversions from and to Iris
+
+* `ncdata <https://pypi.org/project/ncdata>`_, version 3.7.2 or
+  newer. This package is required to convert CF Fields from and to
+  `Iris cubes <https://scitools-iris.readthedocs.io/en/stable/user_manual/explanation/iris_cubes.html#cube>`_.
 
 ----
 
