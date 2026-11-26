@@ -3929,7 +3929,7 @@ class FieldDomain:
     def to_xarray(self, group=True):
         """Convert the {{class}} to an `xarray` dataset.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 3.22.0 and is no longer
         available. Use `cf.to_xarray` instead.
 
         .. versionadded:: 3.21.0
@@ -3939,7 +3939,7 @@ class FieldDomain:
         _DEPRECATION_ERROR_METHOD(
             self,
             "to_xarray",
-            version="NEXTVERSION",
+            version="3.22.0",
             removed_at="4.0.0",
             message="Use the 'cf.to_xarray' function instead.",
         )  # pragma: no cover

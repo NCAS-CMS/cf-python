@@ -1980,7 +1980,7 @@ def _YMDhms(value, attr):
      See `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
     `cf.second` for details.
 
-     .. versionadded:: NEXTVERSION
+     .. versionadded:: 3.22.0
 
     """
     if isinstance(value, Query):
