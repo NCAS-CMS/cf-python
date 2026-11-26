@@ -551,7 +551,7 @@ constructs are available with the `cf-plot` package (that needs to be
 installed separately to cf, see `cf-plot documentation
 <https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
-.. figure:: images/new_gallery_view.png
+.. figure:: images/gallery_v360plus.png
 
    *Examples gallery of plots made with the cf-plot library.*
 

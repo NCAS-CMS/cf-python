@@ -150,7 +150,7 @@ See the `cf-plot gallery
 <https://ncas-cms.github.io/cf-plot/gallery_of_examples.html>`_ for the wide range
 of plotting possibilities with example code.
 
-.. figure:: images/new_gallery_view.png
+.. figure:: images/gallery_v360plus.png
 
    *Examples gallery of plots made with the cf-plot library.*
 
