@@ -1,7 +1,7 @@
 Version 3.22.0
 --------------
 
-**2026-11-26**
+**2026-11-27**
 
 * New package-level functions to convert from and to `iris`:
   `cf.from_iris` and `cf.to_iris`
