@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -130,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.Field.collapse">
-<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">collapse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regroup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">within_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">within_years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">over_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">over_years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_span</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_contiguous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'earth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">great_circle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_vertical_crs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_create_zero_size_cell_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_update_cell_methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.21.0/cf/field.py#L5540-L7754"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.collapse" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Field.</span></span><span class="sig-name descname"><span class="pre">collapse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regroup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">within_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">within_years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">over_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">over_years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_span</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_contiguous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'earth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">great_circle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_vertical_crs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_create_zero_size_cell_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_update_cell_methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/field.py#L5540-L7754"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Field.collapse" title="Link to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -511,15 +511,15 @@ will only be done if all of the following criteria are met:</p>
 <code class="docutils literal notranslate"><span class="pre">'minimum'</span></code>, or <code class="docutils literal notranslate"><span class="pre">'sum'</span></code>;</p></li>
 <li><p>the collapse is over all axes;</p></li>
 <li><p>the collapse is unweighted;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cf.active_storage()</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cf.active_storage()</span></code> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>;</p></li>
 <li><p>a URL of the active storage server has been set with
-<a class="reference internal" href="../function/function/cf.active_storage_url.html#cf.active_storage_url" title="cf.active_storage_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.active_storage_url</span></code></a>;</p></li>
+<a class="reference internal" href="../function/cf.active_storage_url.html#cf.active_storage_url" title="cf.active_storage_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.active_storage_url</span></code></a>;</p></li>
 <li><p>the data values are in netCDF-4 files on disk (rather than
 in any other file format, or in memory) and are not
 numerically packed;</p></li>
 <li><p>the <code class="xref py py-obj docutils literal notranslate"><span class="pre">active_storage</span></code> attribute of the field’s <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object
-is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, indicating that active storage operations may be
-possible. In general, it will only be <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> for data that
+is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, indicating that active storage operations may be
+possible. In general, it will only be <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> for data that
 are in files on disk, are not compressed by convention and
 have not had any other operations applied, apart from
 subspacing;</p></li>
@@ -544,7 +544,7 @@ do a normal, non-active operation.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Define the collapse method. All of the axes specified by
+<dt>method: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Define the collapse method. All of the axes specified by
 the <em>axes</em> parameter are collapsed simultaneously by this
 method. The method is given by one of the following
 strings (see
@@ -705,7 +705,7 @@ multiannual means of calendar monthly minima:</p>
 </pre></div>
 </div>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The axes to be collapsed, defined by those which would be
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The axes to be collapsed, defined by those which would be
 selected by passing each given axis description to a call
 of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
 example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
@@ -744,12 +744,12 @@ details; and note that the value of <em>scale</em> may be
 modified depending on the value of <em>measure</em>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, resulting
+<p>By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, resulting
 in <strong>unweighted calculations</strong>.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Setting <em>weights</em> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is generally a
+<p>Setting <em>weights</em> to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is generally a
 good way to ensure that all collapses are
 appropriately weighted according to the
 field construct’s metadata. In this case, if
@@ -782,7 +782,7 @@ axes of <code class="docutils literal notranslate"><span class="pre">'T'</span><
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care needs to be taken if <em>weights</em> is
-set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> when cell volume weights
+set to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> when cell volume weights
 are desired. The volume weights will be
 taken from a “volume” cell measure
 construct if one exists, otherwise the
@@ -807,7 +807,7 @@ time you could set <code class="docutils literal notranslate"><span class="pre">
 </dd>
 </dl>
 </dd>
-<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>weights</em> is not <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, create weights
+<dt>measure: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>weights</em> is not <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, create weights
 which are cell measures, i.e. which describe actual
 cell sizes (e.g. cell area) with appropriate units
 (e.g. metres squared). By default the weights units
@@ -845,9 +845,9 @@ the size of the vertical coordinate cells.</p>
 <p><span class="versionmodified added">Added in version 3.0.2.</span></p>
 </div>
 </dd>
-<dt>scale: number or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If set to a positive number then scale the weights so
+<dt>scale: number or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If set to a positive number then scale the weights so
 that they are less than or equal to that number. If
-set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the weights are not
+set to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the weights are not
 scaled.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To scale all weights so that they lie between 0 and
@@ -858,7 +858,7 @@ scaled.</p>
 <p><span class="versionmodified added">Added in version 3.0.2.</span></p>
 </div>
 <div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 3.16.0: </span>Default changed to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<p><span class="versionmodified changed">Changed in version 3.16.0: </span>Default changed to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </div>
 </dd>
 <dt>radius: optional</dt><dd><p>Specify the radius used for calculating the areas of
@@ -875,7 +875,7 @@ default radius taken as 6371229 metres.</p>
 <p><span class="versionmodified added">Added in version 3.0.2.</span></p>
 </div>
 </dd>
-<dt>great_circle: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow, if required, the derivation of i) area
+<dt>great_circle: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow, if required, the derivation of i) area
 weights from polygon geometry cells by assuming that each
 cell part is a spherical polygon composed of great circle
 segments; and ii) and the derivation of line-length
@@ -885,7 +885,7 @@ line part is composed of great circle segments.</p>
 <p><span class="versionmodified added">Added in version 3.2.0.</span></p>
 </div>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then size 1 collapsed axes are removed from the
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then size 1 collapsed axes are removed from the
 output data array. By default the axes which are collapsed
 are retained in the result’s data array.</p>
 </dd>
@@ -928,7 +928,7 @@ input coordinates.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
 <td><p>This is the default.</p>
 <p>If the collapse is a climatological time
 collapse over years or over days then
@@ -1055,7 +1055,7 @@ in.</p></li>
 </ul>
 </td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
 <td><p>Define groups that contain the given
 number of elements. The first group
 starts with the first axis element and
@@ -1102,25 +1102,25 @@ be in any group.</p></li>
 <span class="pre">'km')</span></code>.</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of 5 days, starting and ending at
-midnight on each day: <code class="docutils literal notranslate"><span class="pre">group=cf.D(5)</span></code> (see <a class="reference internal" href="../function/function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
+midnight on each day: <code class="docutils literal notranslate"><span class="pre">group=cf.D(5)</span></code> (see <a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of 1 calendar month, starting and
 ending at day 16 of each month: <code class="docutils literal notranslate"><span class="pre">group=cf.M(day=16)</span></code>
-(see <a class="reference internal" href="../function/function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+(see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of the season MAM in each year:
-<code class="docutils literal notranslate"><span class="pre">group=cf.mam()</span></code> (see <a class="reference internal" href="../function/function/cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.mam</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">group=cf.mam()</span></code> (see <a class="reference internal" href="../function/cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.mam</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of the seasons DJF and JJA in each
 year: <code class="docutils literal notranslate"><span class="pre">group=[cf.jja(),</span> <span class="pre">cf.djf()]</span></code>. To define groups
 for seasons DJF, MAM, JJA and SON in each year:
-<code class="docutils literal notranslate"><span class="pre">group=cf.seasons()</span></code> (see <a class="reference internal" href="../function/function/cf.djf.html#cf.djf" title="cf.djf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.djf</span></code></a>, <a class="reference internal" href="../function/function/cf.jja.html#cf.jja" title="cf.jja"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.jja</span></code></a> and
+<code class="docutils literal notranslate"><span class="pre">group=cf.seasons()</span></code> (see <a class="reference internal" href="../function/cf.djf.html#cf.djf" title="cf.djf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.djf</span></code></a>, <a class="reference internal" href="../function/cf.jja.html#cf.jja" title="cf.jja"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.jja</span></code></a> and
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.season</span></code>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups for longitude elements less than or
 equal to 90 degrees and greater than 90 degrees:
 <code class="docutils literal notranslate"><span class="pre">group=[cf.le(90,</span> <span class="pre">'degrees'),</span> <span class="pre">cf.gt(90,</span> <span class="pre">'degrees')]</span></code>
-(see <a class="reference internal" href="../function/function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a> and <a class="reference internal" href="../function/function/cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a>).</p>
+(see <a class="reference internal" href="../function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a> and <a class="reference internal" href="../function/cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of 5 elements: <code class="docutils literal notranslate"><span class="pre">group=5</span></code>.</p>
 </dd>
@@ -1132,7 +1132,7 @@ ignoring the 2nd, 6th and 7th elements:
 </dd>
 </dl>
 </dd>
-<dt>regroup: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then, for grouped collapses, do not collapse the
+<dt>regroup: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then, for grouped collapses, do not collapse the
 field construct, but instead return a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> of
 integers which identifies the groups defined by the
 <em>group</em> parameter. Each group contains the elements which
@@ -1163,7 +1163,7 @@ to a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="c
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
 <td><p>This is the default.</p>
 <p>If the groups are defined by the <em>group</em>
 parameter (i.e. collapses other than
@@ -1196,15 +1196,15 @@ sufficiently small.</p></td>
 range. For example, when creating 3-month means, the
 <em>group_span</em> parameter can be used to allow groups which
 only contain 1 or 2 months of data.</p>
-<p>By default, <em>group_span</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This means that only
+<p>By default, <em>group_span</em> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This means that only
 groups whose span equals the size specified by the
 definition of the groups are collapsed; unless the groups
 have been defined by one or more <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> objects, in which
 case then the default behaviour is to collapse all groups,
 regardless of their size.</p>
-<p>In effect, the <em>group_span</em> parameter defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>
+<p>In effect, the <em>group_span</em> parameter defaults to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>
 unless the groups have been defined by one or more <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a>
-objects, in which case <em>group_span</em> defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+objects, in which case <em>group_span</em> defaults to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#False" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 <p>The different behaviour when the groups have been defined
 by one or more <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> objects is necessary because a
 <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object can only define the composition of a group,
@@ -1213,7 +1213,7 @@ to specify a group span in this case).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Prior to version 3.1.0, the default value of
-<em>group_span</em> was effectively <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+<em>group_span</em> was effectively <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#False" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 </div>
 <p>In general, the span of a group is the absolute difference
 between the lower bound of its first element and the upper
@@ -1234,20 +1234,20 @@ parameters, and is otherwise ignored.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
 <td><p>This is the default. Apply a value of
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> depending on how the
+<a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#False" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> depending on how the
 groups have been defined.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a></p></td>
 <td><p>Ignore groups whose span is not equal to
 the size specified by the definition of
 the groups. Only applicable if the groups
 are defined by a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, <a class="reference internal" href="../class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDuration</span></code></a> or
-<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> object, and this is the default in
+<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> object, and this is the default in
 this case.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#False" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a></p></td>
 <td><p>Collapse all groups, regardless of their
 size. This is the default if the groups
 are defined by one to more <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a>
@@ -1263,7 +1263,7 @@ assumed.</p></td>
 <td><p>Ignore groups whose span is not equals to
 the given time duration.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
 <td><p>Ignore groups that contain fewer than the
 given number of elements</p></td>
 </tr>
@@ -1277,16 +1277,16 @@ that span less than that distance: <code class="docutils literal notranslate"><s
 <dt><em>Parameter example:</em></dt><dd><p>To collapse a daily timeseries into monthly groups,
 ignoring any groups that span less than 1 calendar
 month: monthly values: <code class="docutils literal notranslate"><span class="pre">group=cf.M(),</span> <span class="pre">group_span=True</span></code>
-(see <a class="reference internal" href="../function/function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+(see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To collapse a timeseries into seasonal groups, ignoring
 any groups that span less than three months:
 <code class="docutils literal notranslate"><span class="pre">group=cf.seasons(),</span> <span class="pre">group_span=cf.M(3)</span></code> (see
-<a class="reference internal" href="../function/function/cf.seasons.html#cf.seasons" title="cf.seasons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.seasons</span></code></a> and <a class="reference internal" href="../function/function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+<a class="reference internal" href="../function/cf.seasons.html#cf.seasons" title="cf.seasons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.seasons</span></code></a> and <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 </dl>
 </dd>
-<dt>group_contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify how to treat groups whose elements are not
+<dt>group_contiguous: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Specify how to treat groups whose elements are not
 contiguous or have overlapping cells. For example, when
 creating a December to February means, the
 <em>group_contiguous</em> parameter can be used to allow groups
@@ -1410,20 +1410,20 @@ in.</p></li>
 </table>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of 6 hours, starting at 00:00, 06:00,
-12:00 and 18:00: <code class="docutils literal notranslate"><span class="pre">within_days=cf.h(6)</span></code> (see <a class="reference internal" href="../function/function/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a>).</p>
+12:00 and 18:00: <code class="docutils literal notranslate"><span class="pre">within_days=cf.h(6)</span></code> (see <a class="reference internal" href="../function/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of 1 day, starting at 06:00:
-<code class="docutils literal notranslate"><span class="pre">within_days=cf.D(1,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../function/function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">within_days=cf.D(1,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of 00:00 to 06:00 within each day,
 ignoring the rest of each day:
-<code class="docutils literal notranslate"><span class="pre">within_days=cf.hour(cf.le(6))</span></code> (see <a class="reference internal" href="../function/function/cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hour</span></code></a> and
-<a class="reference internal" href="../function/function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">within_days=cf.hour(cf.le(6))</span></code> (see <a class="reference internal" href="../function/cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hour</span></code></a> and
+<a class="reference internal" href="../function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of 00:00 to 06:00 and 18:00 to 24:00
 within each day, ignoring the rest of each day:
 <code class="docutils literal notranslate"><span class="pre">within_days=[cf.hour(cf.le(6)),</span> <span class="pre">cf.hour(cf.gt(18))]</span></code>
-(see <a class="reference internal" href="../function/function/cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a>, <a class="reference internal" href="../function/function/cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hour</span></code></a> and <a class="reference internal" href="../function/function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a>).</p>
+(see <a class="reference internal" href="../function/cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a>, <a class="reference internal" href="../function/cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hour</span></code></a> and <a class="reference internal" href="../function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a>).</p>
 </dd>
 </dl>
 </dd>
@@ -1501,24 +1501,24 @@ elements.</p></li>
 </table>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of 90 days: <code class="docutils literal notranslate"><span class="pre">within_years=cf.D(90)</span></code>
-(see <a class="reference internal" href="../function/function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
+(see <a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups of 3 calendar months, starting on the
 15th of a month: <code class="docutils literal notranslate"><span class="pre">within_years=cf.M(3,</span> <span class="pre">day=15)</span></code> (see
-<a class="reference internal" href="../function/function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+<a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups for the season MAM within each year:
-<code class="docutils literal notranslate"><span class="pre">within_years=cf.mam()</span></code> (see <a class="reference internal" href="../function/function/cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.mam</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">within_years=cf.mam()</span></code> (see <a class="reference internal" href="../function/cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.mam</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups for February and for November to
 December within each year: <code class="docutils literal notranslate"><span class="pre">within_years=[cf.month(2),</span>
-<span class="pre">cf.month(cf.ge(11))]</span></code> (see <a class="reference internal" href="../function/function/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and <a class="reference internal" href="../function/function/cf.ge.html#cf.ge" title="cf.ge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ge</span></code></a>).</p>
+<span class="pre">cf.month(cf.ge(11))]</span></code> (see <a class="reference internal" href="../function/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and <a class="reference internal" href="../function/cf.ge.html#cf.ge" title="cf.ge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ge</span></code></a>).</p>
 </dd>
 </dl>
 </dd>
 <dt>over_days: optional</dt><dd><p>Define the groups for creating CF “over days”
 climatological statistics.</p>
-<p>By default (or if <em>over_days</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) each group
+<p>By default (or if <em>over_days</em> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) each group
 contains all elements for which the time coordinate cell
 lower bounds have a common time of day but different
 dates, and for which the time coordinate cell upper bounds
@@ -1597,28 +1597,28 @@ in.</p></li>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To define groups for January and for June to December,
 ignoring all other months: <code class="docutils literal notranslate"><span class="pre">over_days=[cf.month(1),</span>
-<span class="pre">cf.month(cf.wi(6,</span> <span class="pre">12))]</span></code> (see <a class="reference internal" href="../function/function/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and <a class="reference internal" href="../function/function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
+<span class="pre">cf.month(cf.wi(6,</span> <span class="pre">12))]</span></code> (see <a class="reference internal" href="../function/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and <a class="reference internal" href="../function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups spanning 90 days:
 <code class="docutils literal notranslate"><span class="pre">over_days=cf.D(90)</span></code> or <code class="docutils literal notranslate"><span class="pre">over_days=cf.h(2160)</span></code>. (see
-<a class="reference internal" href="../function/function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> and <a class="reference internal" href="../function/function/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a>).</p>
+<a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> and <a class="reference internal" href="../function/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups that each span 3 calendar months,
 starting and ending at 06:00 in the first day of each
-month: <code class="docutils literal notranslate"><span class="pre">over_days=cf.M(3,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../function/function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+month: <code class="docutils literal notranslate"><span class="pre">over_days=cf.M(3,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups that each span a calendar month
-<code class="docutils literal notranslate"><span class="pre">over_days=cf.M()</span></code> (see <a class="reference internal" href="../function/function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">over_days=cf.M()</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups for January and for June to December,
 ignoring all other months: <code class="docutils literal notranslate"><span class="pre">over_days=[cf.month(1),</span>
-<span class="pre">cf.month(cf.wi(6,</span> <span class="pre">12))]</span></code> (see <a class="reference internal" href="../function/function/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and <a class="reference internal" href="../function/function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
+<span class="pre">cf.month(cf.wi(6,</span> <span class="pre">12))]</span></code> (see <a class="reference internal" href="../function/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and <a class="reference internal" href="../function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
 </dd>
 </dl>
 </dd>
 <dt>over_years: optional</dt><dd><p>Define the groups for creating CF “over years”
 climatological statistics.</p>
-<p>By default (or if <em>over_years</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) each group
+<p>By default (or if <em>over_years</em> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) each group
 contains all elements for which the time coordinate cell
 lower bounds have a common date of the year but different
 years, and for which the time coordinate cell upper bounds
@@ -1700,20 +1700,20 @@ coordinate bounds {2000-12-01 00:00:00, 2001-12-01
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups spanning 10 calendar years:
 <code class="docutils literal notranslate"><span class="pre">over_years=cf.Y(10)</span></code> or <code class="docutils literal notranslate"><span class="pre">over_years=cf.M(120)</span></code> (see
-<a class="reference internal" href="../function/function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> and <a class="reference internal" href="../function/function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a>).</p>
+<a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> and <a class="reference internal" href="../function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define groups spanning 5 calendar years, starting and
 ending at 06:00 on 01 December of each year:
-<code class="docutils literal notranslate"><span class="pre">over_years=cf.Y(5,</span> <span class="pre">month=12,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../function/function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">over_years=cf.Y(5,</span> <span class="pre">month=12,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>To define one group spanning 1981 to 1990 and another
 spanning 2001 to 2005: <code class="docutils literal notranslate"><span class="pre">over_years=[cf.year(cf.wi(1981,</span>
-<span class="pre">1990),</span> <span class="pre">cf.year(cf.wi(2001,</span> <span class="pre">2005)]</span></code> (see <a class="reference internal" href="../function/function/cf.year.html#cf.year" title="cf.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.year</span></code></a> and
-<a class="reference internal" href="../function/function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
+<span class="pre">1990),</span> <span class="pre">cf.year(cf.wi(2001,</span> <span class="pre">2005)]</span></code> (see <a class="reference internal" href="../function/cf.year.html#cf.year" title="cf.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.year</span></code></a> and
+<a class="reference internal" href="../function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
 </dd>
 </dl>
 </dd>
-<dt>remove_vertical_crs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then remove a vertical
+<dt>remove_vertical_crs: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then remove a vertical
 coordinate reference construct and all of its domain
 ancillary constructs if any of its coordinate
 constructs or domain ancillary constructs span any
@@ -1728,8 +1728,8 @@ non-parametric vertical coordinate values.</p>
 <p><span class="versionmodified added">Added in version 3.14.1.</span></p>
 </div>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
 </dd>
@@ -1760,7 +1760,7 @@ returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

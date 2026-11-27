@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -130,46 +130,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.FieldList.to_xarray<a class="headerlink" href="#cf-fieldlist-to-xarray" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.FieldList.to_xarray">
-<span class="sig-prename descclassname"><span class="pre">FieldList.</span></span><span class="sig-name descname"><span class="pre">to_xarray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.21.0/cf/mixin/fielddomainlist.py#L335-L365"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.FieldList.to_xarray" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">FieldList.</span></span><span class="sig-name descname"><span class="pre">to_xarray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/mixin/fielddomainlist.py#L335-L348"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.FieldList.to_xarray" title="Link to this definition">¶</a></dt>
 <dd><p>Convert the list elements to an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> Dataset.</p>
-<p>If the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf_xarray</span></code> package (<a class="reference external" href="https://cf-xarray.readthedocs.io">https://cf-xarray.readthedocs.io</a>)
-is installed then the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf_xarray</span></code> accessors that allow some
-interpretation of CF attributes will be present on
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.Dataset</span></code> objects.</p>
-<p>Note that <code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">=</span> <span class="pre">fl.to_xarray()</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">=</span>
-<span class="pre">cf.write(fl,</span> <span class="pre">fmt='XARRAY')</span></code>. Also, <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.write.html#cfdm.write" title="(in Python cfdm package v1.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> allows a
-mixture of fields and domains to be written to the
-same <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">Added in version 3.21.0.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../function/function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></p>
-</div>
-<dl class="field-list">
-<dt class="field-odd">Parameter<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt>group: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then create a “flat” dataset, i.e. one with
-only the root group, regardless of any group structure
-specified by the netCDF interfaces of the list
-elements and their components. If True (the default)
-then any sub-groups will be created and populated.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl>
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.Dataset</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.DataTree</span></code></dt><dd><p>The equivalent <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset.</p>
-<p>If there are no sub-groups of the root group, or if
-<em>group</em> is False, then an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.Dataset</span></code> is
-returned.</p>
-<p>If there are sub-groups of the root group and <em>group</em>
-is True, then an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.DataTree</span></code> is returned.</p>
-</dd>
-</dl>
-</dd>
-</dl>
+<p>Deprecated at version 3.22.0 and is no longer
+available. Use <a class="reference internal" href="../function/cf.to_xarray.html#cf.to_xarray" title="cf.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.to_xarray</span></code></a> instead.</p>
 </dd></dl>
 
 </section>
@@ -182,7 +146,7 @@ is True, then an <code class="xref py py-obj docutils literal notranslate"><span
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="_static/documentation_options.js?v=be4f90db"></script>
+    <script src="_static/documentation_options.js?v=2c304e30"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.22.0</a></h1>
 
 
 
@@ -1065,7 +1065,7 @@ client.</p>
 determined on a case-by-case basis, and will only be done if all of
 the following criteria are met:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">cf.active_storage()</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cf.active_storage()</span></code> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cf.active_storage_url()</span></code> returns the URL of a valid active
 storage server;</p></li>
 <li><p>the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> chunk’s data are defined by a netCDF-4 file on disk
@@ -1136,7 +1136,7 @@ field construct.</p>
 </section>
 <section id="histograms">
 <span id="id10"></span><h2>Histograms<a class="headerlink" href="#histograms" title="Link to this heading">¶</a></h2>
-<p>The <a class="reference internal" href="function/function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a> function is used to record the distribution of a
+<p>The <a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a> function is used to record the distribution of a
 set of variables in the form of an N-dimensional histogram.</p>
 <p>Each dimension of the histogram is defined by a field construct
 returned by the <a class="reference internal" href="method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a> method of a field construct. This
@@ -1856,7 +1856,7 @@ combining such field constructs.)</em></p>
 result of binary operation will, by default, only have bounds if both
 operands have bounds; and the bounds of the result will be the result
 of the same binary operation on bounds objects. This behaviour may
-modified by the <a class="reference internal" href="function/function/cf.bounds_combination_mode.html#cf.bounds_combination_mode" title="cf.bounds_combination_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.bounds_combination_mode</span></code></a> function.</p>
+modified by the <a class="reference internal" href="function/cf.bounds_combination_mode.html#cf.bounds_combination_mode" title="cf.bounds_combination_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.bounds_combination_mode</span></code></a> function.</p>
 <div class="literal-block-wrapper docutils container" id="id63">
 <div class="code-block-caption"><span class="caption-text"><em>Demonstrate how bounds are treated in binary
 operations.</em></span><a class="headerlink" href="#id63" title="Link to this code">¶</a></div>
@@ -2114,8 +2114,8 @@ data instances instead. See
 <li><p><strong>Option 2:</strong> If the mapping is not possible due to the absence of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code> properties (or <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code> attributes) on metadata
 constructs that are known to correspond, then setting “relaxed
-identities” with the <a class="reference internal" href="function/function/cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relaxed_identities</span></code></a> function may
-help. Setting relaxed identities to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> allows the <code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code>
+identities” with the <a class="reference internal" href="function/cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relaxed_identities</span></code></a> function may
+help. Setting relaxed identities to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> allows the <code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code>
 property and netCDF variable name (see the <a class="reference internal" href="tutorial.html#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>), to also be considered when identifying
 constructs.</p></li>
 <li><p><strong>Option 3:</strong> Add more metadata to the field and metadata constructs.</p></li>
@@ -2584,7 +2584,7 @@ azimuthal angle.</p>
 </section>
 <section id="divergence">
 <h2>Divergence<a class="headerlink" href="#divergence" title="Link to this heading">¶</a></h2>
-<p>The horizontal divergence may be calculated with the <a class="reference internal" href="function/function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a>
+<p>The horizontal divergence may be calculated with the <a class="reference internal" href="function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a>
 function from orthogonal vector component fields which have dimension
 coordinates of X and Y, in either Cartesian (e.g. plane projection) or
 spherical polar coordinate systems.</p>
@@ -2608,11 +2608,11 @@ spherical polar coordinates is given by:</p>
 <p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
 polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
 azimuthal angle.</p>
-<p>See <a class="reference internal" href="function/function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a> for details and examples.</p>
+<p>See <a class="reference internal" href="function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a> for details and examples.</p>
 </section>
 <section id="curl">
 <h2>Curl<a class="headerlink" href="#curl" title="Link to this heading">¶</a></h2>
-<p>The horizontal curl may be calculated with the <a class="reference internal" href="function/function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> function
+<p>The horizontal curl may be calculated with the <a class="reference internal" href="function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> function
 from orthogonal vector component fields which have dimension
 coordinates of X and Y, in either Cartesian (e.g. plane projection) or
 spherical polar coordinate systems.</p>
@@ -2638,7 +2638,7 @@ spherical polar coordinates is given by:</p>
 <p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
 polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
 azimuthal angle.</p>
-<p>See <a class="reference internal" href="function/function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> for details and examples.</p>
+<p>See <a class="reference internal" href="function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> for details and examples.</p>
 <hr class="docutils" />
 </section>
 </section>
@@ -2651,7 +2651,7 @@ azimuthal angle.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

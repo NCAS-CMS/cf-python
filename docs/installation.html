@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="_static/documentation_options.js?v=be4f90db"></script>
+    <script src="_static/documentation_options.js?v=2c304e30"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.22.0</a></h1>
 
 
 
@@ -123,7 +123,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="installation">
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.21.0 for version 1.13 of the CF conventions.</p>
+<p>Version 3.22.0 for version 1.13 of the CF conventions.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#operating-systems" id="id21"><strong>Operating systems</strong></a></p></li>
@@ -159,7 +159,7 @@ Windows Subsystem for Linux (WSL)</a>.</p>
 </section>
 <section id="python-versions">
 <span id="id3"></span><h2><a class="toc-backref" href="#id22" role="doc-backlink"><strong>Python versions</strong></a><a class="headerlink" href="#python-versions" title="Link to this heading">¶</a></h2>
-<p>The cf package is only for Python 3.10 or newer.</p>
+<p>The cf package is only for Python 3.11 or newer.</p>
 <hr class="docutils" />
 </section>
 <section id="pip">
@@ -295,7 +295,7 @@ files</span></a>, and</p></li>
 <section id="required">
 <span id="id11"></span><h3><a class="toc-backref" href="#id30" role="doc-backlink">Required</a><a class="headerlink" href="#required" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p><a class="reference external" href="https://www.python.org/">Python</a>, 3.10.0 or newer.</p></li>
+<li><p><a class="reference external" href="https://www.python.org/">Python</a>, 3.11.0 or newer.</p></li>
 <li><p><a class="reference external" href="http://www.numpy.org">numpy</a>, versions 2.0.0 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/dask">dask</a>, version 2025.5.1 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/distributed">distributed</a>, version 2025.5.1 or
@@ -305,8 +305,8 @@ newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.6.4 or newer
 (note that this package may be installed with netCDF4).</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/scipy">scipy</a>, version 1.10.0 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.13.3.0 or up to,
-but not including, 1.13.4.0.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.13.4.0 or up to,
+but not including, 1.13.5.0.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.3.7 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/psutil/">psutil</a>, version 0.6.0 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/packaging/">packaging</a>, version 20.0 or newer.</p></li>
@@ -392,6 +392,12 @@ collapses.</p></li>
 newer. This package is required to create 2-d latitude and longitude
 coordinates from grid mappings.</p></li>
 </ul>
+<p class="rubric">Conversions from and to Iris</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pypi.org/project/ncdata">ncdata</a>, version 3.7.2 or
+newer. This package is required to convert CF Fields from and to
+<a class="reference external" href="https://scitools-iris.readthedocs.io/en/stable/user_manual/explanation/iris_cubes.html#cube">Iris cubes</a>.</p></li>
+</ul>
 <hr class="docutils" />
 </section>
 </section>
@@ -418,7 +424,7 @@ coordinates from grid mappings.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

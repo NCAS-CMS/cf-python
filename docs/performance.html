@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="_static/documentation_options.js?v=be4f90db"></script>
+    <script src="_static/documentation_options.js?v=2c304e30"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.22.0</a></h1>
 
 
 
@@ -123,7 +123,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="performance">
 <span id="id1"></span><h1><strong>Performance</strong><a class="headerlink" href="#performance" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.21.0 for version 1.13 of the CF conventions.</p>
+<p>Version 3.22.0 for version 1.13 of the CF conventions.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#dask" id="id9"><strong>Dask</strong></a></p></li>
@@ -192,7 +192,7 @@ by using the <code class="docutils literal notranslate"><span class="pre">weight
 </li>
 <li><p><strong>Aggregation</strong></p>
 <p>When two or more field or domain constructs are aggregated to form a
-single construct, either by <a class="reference internal" href="function/function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> or <a class="reference internal" href="function/function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> (the latter
+single construct, either by <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> or <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> (the latter
 calls the former by default), the data arrays of some metadata
 constructs (coordinates, cell measures, etc.) must be compared
 non-lazily to ascertain if aggregation is possible.</p>
@@ -204,7 +204,7 @@ non-lazily to ascertain if aggregation is possible.</p>
 convention (such as compression by gathering, some discrete sampling
 geometries, etc.), the compression metadata, such as the “list”
 array for compression by gathering, are read from disk non-lazily
-during the <a class="reference internal" href="function/function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> operation. The compressed data themselves are,
+during the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> operation. The compressed data themselves are,
 however, accessed lazily.</p>
 </li>
 </ul>
@@ -218,10 +218,10 @@ performance is strongly dependent on the size and shape of these
 chunks.</p>
 <p>By default, chunks have a size of at most <code class="docutils literal notranslate"><span class="pre">128</span> <span class="pre">MiB</span></code> and prefer
 square-like shapes. A new default chunk size is set with the
-<a class="reference internal" href="function/function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> function. The default chunk size and shape may be
-overridden by <a class="reference internal" href="function/function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, as well as when creating <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instances ab
+<a class="reference internal" href="function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> function. The default chunk size and shape may be
+overridden by <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, as well as when creating <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instances ab
 initio. Any data may be re-chunked after its creation with the
-<a class="reference internal" href="method/cf.Data.rechunk.html#cf.Data.rechunk" title="cf.Data.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.rechunk</span></code></a> method, although this operation can be expensive.</p>
+<a class="reference internal" href="attribute/cf.Data.rechunk.html#cf.Data.rechunk" title="cf.Data.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.rechunk</span></code></a> method, although this operation can be expensive.</p>
 <p>In general, good performance results from following these rules for
 chunk sizes and shapes (copied from the <a class="reference external" href="https://docs.dask.org/en/stable/array-chunks.html">Dask chunks documentation</a>):</p>
 <ul class="simple">
@@ -338,7 +338,7 @@ available we hope to lift this restriction.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

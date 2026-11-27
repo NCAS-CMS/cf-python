@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -130,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.compute<a class="headerlink" href="#cf-data-compute" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.Data.compute">
-<span class="sig-prename descclassname"><span class="pre">Data.</span></span><span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">persist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_force_to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_cache_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/data/data.py#L4110-L4246"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Data.compute" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Data.</span></span><span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">persist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_force_to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_cache_elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/data/data.py#L4110-L4246"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Data.compute" title="Link to this definition">¶</a></dt>
 <dd><p>A view of the computed data.</p>
 <p>In-place changes to the returned array <em>might</em> affect the
 underlying Dask array, depending on how the that Dask array
@@ -139,43 +139,43 @@ has been defined.</p>
 as the data.</p>
 <p>Compare with <a class="reference internal" href="../attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>.</p>
 <p><strong>Performance</strong></p>
-<p><a class="reference internal" href="#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a> causes all delayed operations to be computed.</p>
+<p><a class="reference internal" href="../attribute/cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a> causes all delayed operations to be computed.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="../attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.datetime_array.html#cf.Data.datetime_array" title="cf.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.sparse_array.html#cf.Data.sparse_array" title="cf.Data.sparse_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sparse_array</span></code></a>,
-<a class="reference internal" href="cf.Data.persist.html#cf.Data.persist" title="cf.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a>, <a class="reference internal" href="../function/function/cf.persist_data.html#cf.persist_data" title="cf.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.persist_data</span></code></a></p>
+<a class="reference internal" href="cf.Data.persist.html#cf.Data.persist" title="cf.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a>, <a class="reference internal" href="../function/cf.persist_data.html#cf.persist_data" title="cf.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.persist_data</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>persist: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Control the persistence of computed data. Persisting
+<dt>persist: <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Control the persistence of computed data. Persisting
 turns the underlying lazy dask array into an
 equivalent chunked dask array, but now with the
 results fully computed and cached memory. This can
 avoid the expense of re-reading the data from disk, or
 re-computing it, when the data is accessed on multiple
 occasions.</p>
-<p>If <em>persist</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then the value of
+<p>If <em>persist</em> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then the value of
 <em>persist</em> will be taken from the
-<a class="reference internal" href="../function/function/cf.persist_data.html#cf.persist_data" title="cf.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.persist_data</span></code></a> function. If <em>persist</em> is
+<a class="reference internal" href="../function/cf.persist_data.html#cf.persist_data" title="cf.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.persist_data</span></code></a> function. If <em>persist</em> is
 True then the data is persisted, regardless of value
-returned by <a class="reference internal" href="../function/function/cf.persist_data.html#cf.persist_data" title="cf.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.persist_data</span></code></a>. If <em>persist</em>
+returned by <a class="reference internal" href="../function/cf.persist_data.html#cf.persist_data" title="cf.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.persist_data</span></code></a>. If <em>persist</em>
 is False then the data is not persisted, regardless of
-value returned by <a class="reference internal" href="../function/function/cf.persist_data.html#cf.persist_data" title="cf.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.persist_data</span></code></a>.</p>
+value returned by <a class="reference internal" href="../function/cf.persist_data.html#cf.persist_data" title="cf.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.persist_data</span></code></a>.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.13.1.0</p>
 </div>
 </dd>
-<dt>_force_to_memory: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then force the data resulting
+<dt>_force_to_memory: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then force the data resulting
 from computing the returned Dask graph to be in
 memory. If False then the data resulting from
 computing the Dask graph may or may not be in memory,
 depending on the nature of the stack.</p>
 </dd>
-<dt>_cache_elements: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then create a cache of selected
+<dt>_cache_elements: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then create a cache of selected
 elements from the computed array in memory, if the
 type of the array allows it. See <a class="reference internal" href="cf.Data.cache_elements.html#cf.Data.cache_elements" title="cf.Data.cache_elements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cache_elements</span></code></a> for
 details.</p>
@@ -233,7 +233,7 @@ details.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

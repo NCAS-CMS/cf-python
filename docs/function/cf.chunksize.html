@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -128,7 +128,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.chunksize<a class="headerlink" href="#cf-chunksize" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cf.chunksize">
-<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">chunksize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.21.0/cf/__init__.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.chunksize" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">chunksize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/__init__.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.chunksize" title="Link to this definition">¶</a></dt>
 <dd><p>Set the default chunksize used by <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> arrays.</p>
 <p>If called without any arguments then the existing chunksize is
 returned.</p>
@@ -136,21 +136,21 @@ returned.</p>
 <p class="admonition-title">Note</p>
 <p>Setting the chunk size will also change the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
 global configuration value <code class="docutils literal notranslate"><span class="pre">'array.chunk-size'</span></code>. If
-<a class="reference internal" href="function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a> is used in context manager then the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
+<a class="reference internal" href="#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a> is used in context manager then the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
 configuration value is only altered within that context.
 Setting the chunk size directly from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
 configuration API will affect subsequent data creation,
-but will <em>not</em> change the value of <a class="reference internal" href="function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a>.</p>
+but will <em>not</em> change the value of <a class="reference internal" href="#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a>.</p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>arg: number or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The chunksize in bytes. Any size accepted by
+<dt>arg: number or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The chunksize in bytes. Any size accepted by
 <a class="reference external" href="https://docs.dask.org/en/latest/api.html#dask.utils.parse_bytes" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.utils.parse_bytes</span></code></a> is accepted, for instance
 <code class="docutils literal notranslate"><span class="pre">100</span></code>, <code class="docutils literal notranslate"><span class="pre">'100'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1e6'</span></code>, <code class="docutils literal notranslate"><span class="pre">'100</span> <span class="pre">MB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'100M'</span></code>,
 <code class="docutils literal notranslate"><span class="pre">'5kB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'5.4</span> <span class="pre">kB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1kiB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1e6</span> <span class="pre">kB'</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">'MB'</span></code> are all valid sizes.</p>
-<p>Note that if <em>arg</em> is a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, or a string that implies
+<p>Note that if <em>arg</em> is a <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, or a string that implies
 a non-integral amount of bytes, then the integer part
 (rounded down) will be used.</p>
 <dl class="simple">
@@ -200,7 +200,7 @@ new value was specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

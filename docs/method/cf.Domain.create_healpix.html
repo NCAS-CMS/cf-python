@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -131,7 +131,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.create_healpix<a class="headerlink" href="#cf-domain-create-healpix" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.Domain.create_healpix">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Domain.</span></span><span class="sig-name descname"><span class="pre">create_healpix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement_level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexing_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nested'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.21.0/cf/domain.py#L266-L481"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Domain.create_healpix" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Domain.</span></span><span class="sig-name descname"><span class="pre">create_healpix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refinement_level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexing_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nested'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/domain.py#L266-L481"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.Domain.create_healpix" title="Link to this definition">¶</a></dt>
 <dd><p>Create a new global HEALPix grid.</p>
 <p>The HEALPix axis of the new Domain is ordered so that the
 HEALPix indices are monotonically increasing.</p>
@@ -170,13 +170,13 @@ amount:</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>refinement_level: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The refinement level of the grid within the HEALPix
+<dt>refinement_level: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The refinement level of the grid within the HEALPix
 hierarchy, starting at 0 for the base tessellation
 with 12 cells. The number of cells in the global
 HEALPix grid for refinement level <em>n</em> is
 <span class="math notranslate nohighlight">\(12\times 4^n\)</span>.</p>
 </dd>
-<dt>indexing_scheme: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The HEALPix indexing scheme. One of <code class="docutils literal notranslate"><span class="pre">'nested'</span></code> (the
+<dt>indexing_scheme: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The HEALPix indexing scheme. One of <code class="docutils literal notranslate"><span class="pre">'nested'</span></code> (the
 default), <code class="docutils literal notranslate"><span class="pre">'ring'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nuniq'</span></code>, or <code class="docutils literal notranslate"><span class="pre">'zuniq'</span></code>.</p>
 <p>The nested scheme indexes with consecutive indices the
 pixels inside a single coarser refinement level
@@ -226,7 +226,7 @@ any numeric scalar object, including <a class="reference external" href="https:/
 <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The units of the radius are assumed to
 be metres, unless specified by a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object. If the
 special value <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> is given then the radius
-taken as 6371229 metres. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then
+taken as 6371229 metres. If <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then
 no radius is set.</p>
 <dl class="simple">
 <dt><em>Example:</em></dt><dd><p>Equivalent ways to set a radius of 6371229 metres:
@@ -302,7 +302,7 @@ no radius is set.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

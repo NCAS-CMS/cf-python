@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -130,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.CoordinateReference.match_by_identity<a class="headerlink" href="#cf-coordinatereference-match-by-identity" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.CoordinateReference.match_by_identity">
-<span class="sig-prename descclassname"><span class="pre">CoordinateReference.</span></span><span class="sig-name descname"><span class="pre">match_by_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">identities</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.21.0/cf/coordinatereference.py#L529-L603"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CoordinateReference.match_by_identity" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">CoordinateReference.</span></span><span class="sig-name descname"><span class="pre">match_by_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">identities</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/coordinatereference.py#L529-L603"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CoordinateReference.match_by_identity" title="Link to this definition">¶</a></dt>
 <dd><p>Determine whether or not one of the identities matches.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version 3.0.0.</span></p>
@@ -148,7 +148,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 etc.); a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object (e.g. <code class="docutils literal notranslate"><span class="pre">cf.eq('longitude')</span></code>); or
 a compiled regular expression
 (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^atmosphere')</span></code>) that is compared with
-the construct’s identities via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+the construct’s identities via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
 <p>A construct has a number of identities, and the condition
 is satisfied if any of the construct’s identities, as
 returned by the <a class="reference internal" href="cf.CoordinateReference.identities.html#cf.CoordinateReference.identities" title="cf.CoordinateReference.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a> method, equals the condition
@@ -169,7 +169,7 @@ construct <code class="docutils literal notranslate"><span class="pre">x</span><
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not the coordinate reference matches one of the
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not the coordinate reference matches one of the
 given identities.</p>
 </dd>
 </dl>
@@ -200,7 +200,7 @@ given identities.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

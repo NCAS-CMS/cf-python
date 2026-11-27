@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -130,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.CellMeasure.match_by_property<a class="headerlink" href="#cf-cellmeasure-match-by-property" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cf.CellMeasure.match_by_property">
-<span class="sig-prename descclassname"><span class="pre">CellMeasure.</span></span><span class="sig-name descname"><span class="pre">match_by_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.21.0/cf/mixin/properties.py#L823-L924"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CellMeasure.match_by_property" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">CellMeasure.</span></span><span class="sig-name descname"><span class="pre">match_by_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/mixin/properties.py#L823-L924"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.CellMeasure.match_by_property" title="Link to this definition">¶</a></dt>
 <dd><p>Whether or not properties satisfy conditions.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version 3.0.0.</span></p>
@@ -145,9 +145,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dt>mode: optional</dt><dd><p>Define the behaviour when multiple conditions are
 provided.</p>
 <p>By default (or if the <em>mode</em> parameter is <code class="docutils literal notranslate"><span class="pre">'and'</span></code>) the
-match is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the field construct satisfies all of
+match is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the field construct satisfies all of
 the given conditions, but if the <em>mode</em> parameter is
-<code class="docutils literal notranslate"><span class="pre">'or'</span></code> then the match is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> when at least one of the
+<code class="docutils literal notranslate"><span class="pre">'or'</span></code> then the match is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> when at least one of the
 conditions is satisfied.</p>
 </dd>
 <dt>properties: optional</dt><dd><p>Define conditions on properties.</p>
@@ -158,8 +158,8 @@ applied to the property, and is either a string
 (e.g. <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>); a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object
 (e.g. <code class="docutils literal notranslate"><span class="pre">cf.eq('longitude')</span></code>); or a compiled regular
 expression (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^atmosphere')</span></code>) that is
-compared with the property value via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
-<p>If the value is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then the condition is one of
+compared with the property value via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<p>If the value is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then the condition is one of
 existence and is satisfied if the property exists,
 regardless of its value. Otherwise the condition is
 satisfied if the property equals the value.</p>
@@ -179,7 +179,7 @@ value: <code class="docutils literal notranslate"><span class="pre">long_name=No
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not the conditions are met.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not the conditions are met.</p>
 </dd>
 </dl>
 </dd>
@@ -207,7 +207,7 @@ value: <code class="docutils literal notranslate"><span class="pre">long_name=No
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

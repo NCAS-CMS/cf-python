@@ -148,6 +148,10 @@ The following file types can be read:
 
 ..
 
+* In memory `xarray` datasets (see also `cf.from_xarray`).
+
+..
+
 Note that when reading netCDF4 files that contain :ref:`hierachical
 groups <Hierarchical-groups>`, the group structure is saved via the
 :ref:`netCDF interface <NetCDF-interface>` so that it may be re-used,
@@ -547,7 +551,7 @@ constructs are available with the `cf-plot` package (that needs to be
 installed separately to cf, see `cf-plot documentation
 <https://ncas-cms.github.io/cf-plot/build/>`_ for details).
 
-.. figure:: images/new_gallery_view.png
+.. figure:: images/gallery_v360plus.png
 
    *Examples gallery of plots made with the cf-plot library.*
 

@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -129,7 +129,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.div_xy<a class="headerlink" href="#cf-div-xy" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cf.div_xy">
-<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">div_xy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_wrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_sided_at_boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.21.0/cf/maths.py#L562-L793"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.div_xy" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">div_xy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_wrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_sided_at_boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/maths.py#L562-L793"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.div_xy" title="Link to this definition">¶</a></dt>
 <dd><p>Calculate the horizontal divergence of an (X, Y) vector.</p>
 <p>The horizontal divergence is calculated from orthogonal vector
 component fields which have dimension coordinates of X and Y, in
@@ -165,7 +165,7 @@ finite difference could not be calculated.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a>, <a class="reference internal" href="../method/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.derivative</span></code></a>,
+<p><a class="reference internal" href="cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a>, <a class="reference internal" href="../method/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.derivative</span></code></a>,
 <a class="reference internal" href="../method/cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.grad_xy</span></code></a>, <a class="reference internal" href="../method/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.iscyclic</span></code></a>,
 <a class="reference internal" href="../method/cf.Field.laplacian_xy.html#cf.Field.laplacian_xy" title="cf.Field.laplacian_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.laplacian_xy</span></code></a></p>
 </div>
@@ -174,7 +174,7 @@ finite difference could not be calculated.</p>
 <dd class="field-odd"><dl>
 <dt>fx, fy: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>The fields containing the X and Y vector components.</p>
 </dd>
-<dt>x_wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether the X axis is cyclic or not. By default <em>x_wrap</em>
+<dt>x_wrap: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether the X axis is cyclic or not. By default <em>x_wrap</em>
 is set to the result of this call to the <em>fx</em> field
 construct’s <a class="reference internal" href="../method/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>
 method:<code class="docutils literal notranslate"><span class="pre">fx.iscyclic('X')</span></code>. If the X axis is cyclic then
@@ -184,7 +184,7 @@ values from the other, regardless of the setting of
 <p>The cyclicity of the Y axis is always set to the result of
 <code class="docutils literal notranslate"><span class="pre">fy.iscyclic('Y')</span></code>.</p>
 </dd>
-<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then one-sided finite differences are calculated
+<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then one-sided finite differences are calculated
 at the non-cyclic boundaries. By default missing values
 are set at non-cyclic boundaries.</p>
 </dd>
@@ -261,7 +261,7 @@ metres.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

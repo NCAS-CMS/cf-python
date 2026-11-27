@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -128,22 +128,22 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.open_files_threshold_exceeded<a class="headerlink" href="#cf-open-files-threshold-exceeded" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cf.open_files_threshold_exceeded">
-<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">open_files_threshold_exceeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.21.0/cf/functions.py#L1743-L1781"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.open_files_threshold_exceeded" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">open_files_threshold_exceeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/functions.py#L1744-L1782"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.open_files_threshold_exceeded" title="Link to this definition">¶</a></dt>
 <dd><p>Return True if the total number of open files is greater than the
 current threshold.</p>
 <p>Deprecated at version 3.14.0 and is no longer available.</p>
 <p>The threshold is defined as a fraction of the maximum possible number
 of concurrently open files (an operating system dependent amount). The
-fraction is retrieved and set with the <a class="reference internal" href="function/cf.of_fraction.html#cf.of_fraction" title="cf.of_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">of_fraction</span></code></a> function.</p>
+fraction is retrieved and set with the <a class="reference internal" href="cf.of_fraction.html#cf.of_fraction" title="cf.of_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">of_fraction</span></code></a> function.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="function/cf.close_files.html#cf.close_files" title="cf.close_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.close_files</span></code></a>, <a class="reference internal" href="function/cf.close_one_file.html#cf.close_one_file" title="cf.close_one_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.close_one_file</span></code></a>,
-<a class="reference internal" href="function/cf.open_files.html#cf.open_files" title="cf.open_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.open_files</span></code></a></p>
+<p><a class="reference internal" href="cf.close_files.html#cf.close_files" title="cf.close_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.close_files</span></code></a>, <a class="reference internal" href="cf.close_one_file.html#cf.close_one_file" title="cf.close_one_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.close_one_file</span></code></a>,
+<a class="reference internal" href="cf.open_files.html#cf.open_files" title="cf.open_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.open_files</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not the number of open files exceeds the
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not the number of open files exceeds the
 threshold.</p>
 </dd>
 </dl>
@@ -173,7 +173,7 @@ possible number of concurrently open files:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

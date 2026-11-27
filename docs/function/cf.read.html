@@ -7,16 +7,17 @@
 
     <title>cf.read &#8212; Documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="../_static/documentation_options.js?v=be4f90db"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=a56c686a"></script>
-    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -32,15 +33,15 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/logo.svg" alt="Logo"/>
+              <img class="logo" src="../_static/logo.svg" alt="Logo of Python cf package"/>
             </a></p>
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
 
 
 
@@ -127,7 +128,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cf.read">
-<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsqueeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdl_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">um</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_at_top_of_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">follow_symlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dask_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storage-aligned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_read_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_dimension_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'closest_ancestor'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filesystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legacy_um_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.21.0/cf/read_write/read.py#L17-L634"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.read" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsqueeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdl_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">um</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_at_top_of_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">follow_symlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dask_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storage-aligned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_read_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_dimension_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'closest_ancestor'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filesystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legacy_um_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/read_write/read.py#L17-L634"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.read" title="Link to this definition">¶</a></dt>
 <dd><p>Read field or domain constructs from files.</p>
 <p>The following file formats are supported: netCDF, CDL, Zarr,
 Kerchunk, PP, and UM fields file.</p>
@@ -195,7 +196,7 @@ into field constructs with 3-d, 4-d or 5-d data. This is done
 prior to any field construct aggregation (see the <em>aggregate</em>
 parameter).</p>
 <p>When reading PP and UM fields files, the <em>relaxed_units</em> aggregate
-option is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always
+option is set to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always
 available to field constructs derived from UM fields files or PP
 files.</p>
 <p><strong>Performance</strong></p>
@@ -235,8 +236,8 @@ compared non-lazily to ascertain if aggregation is possible.</p>
 field or domain constructs.</p>
 <p>Each dataset must be one of:</p>
 <ul>
-<li><p>A string-like path name to the dataset (such as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>
-or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> instance).</p>
+<li><p>A string-like path name to the dataset (such as a <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>
+or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> instance).</p>
 <ul>
 <li><p>Local names may be relative paths and will have tilde
 and shell environment variable expansions applied to
@@ -293,7 +294,7 @@ representation of a dataset, rather than a path name.</p></li>
 </ul>
 </li>
 <li><p>A file-like object that accesses the dataset (such as
-<a class="reference external" href="https://docs.python.org/3/library/io.html#io.BufferedReader" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">io.BufferedReader</span></code></a> or the result of an <code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec</span></code> file
+<a class="reference external" href="https://docs.python.org/3/library/io.html#io.BufferedReader" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">io.BufferedReader</span></code></a> or the result of an <code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec</span></code> file
 system open)</p></li>
 <li><p>A directory-like object that accesses the dataset (such
 as <code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec.mapping.FSMap</span></code>)</p></li>
@@ -307,7 +308,7 @@ and <code class="xref py py-obj docutils literal notranslate"><span class="pre">
 same API as one of the backend objects, or as
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">xnetcdf.Dataset</span></code>. In practice, this means any object
 <code class="docutils literal notranslate"><span class="pre">x</span></code> for which <code class="docutils literal notranslate"><span class="pre">isinstance(x,</span> <span class="pre">&lt;backend-object&gt;)</span></code> is
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> for any <code class="docutils literal notranslate"><span class="pre">&lt;backend-object&gt;</span></code> from the selection
+<a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> for any <code class="docutils literal notranslate"><span class="pre">&lt;backend-object&gt;</span></code> from the selection
 of allowed backend objects. For instance, if you have
 created a library called <code class="docutils literal notranslate"><span class="pre">my_pyfive</span></code> for which
 <code class="docutils literal notranslate"><span class="pre">my_pyfive.File</span></code> is (registered as) a subclass of
@@ -315,10 +316,10 @@ created a library called <code class="docutils literal notranslate"><span class=
 passed to <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dataset</span></code>.</p></li>
 </ul>
 </dd>
-<dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then recursively read sub-directories of any
+<dt>recursive: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then recursively read sub-directories of any
 directories specified with the <em>datasets</em> parameter.</p>
 </dd>
-<dt>followlinks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>recursive</em> is True, then also search for
+<dt>followlinks: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>recursive</em> is True, then also search for
 datasets in sub-directories which resolve to symbolic
 links. By default directories which resolve to symbolic
 links are ignored. Ignored of <em>recursive</em> is
@@ -328,7 +329,7 @@ followed.</p>
 lead to infinite recursion if a symbolic link points to a
 parent directory of itself.</p>
 </dd>
-<dt>cdl_string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and the format to read is CDL then each string
+<dt>cdl_string: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and the format to read is CDL then each string
 given by the <em>datasets</em> parameter is interpreted as a
 string of actual CDL rather than the name of a location
 from which field or domain constructs can be read.</p>
@@ -336,10 +337,10 @@ from which field or domain constructs can be read.</p>
 is ignored as the format is assumed to be CDL, so in this
 case it is not necessary to also specify <code class="docutils literal notranslate"><span class="pre">fmt='CDL'</span></code>.</p>
 </dd>
-<dt>dataset_type: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Only read datasets of the given type or types, ignoring
+<dt>dataset_type: <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Only read datasets of the given type or types, ignoring
 others. If there are no dataset of the given types, or
 <em>dataset_type</em> is empty sequence, then an empty list is
-returned. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) all datasets defined by
+returned. If <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) all datasets defined by
 the <em>dataset</em> parameter are read, and an exception is
 raised for any invalid dataset type.</p>
 <p>Valid file types are:</p>
@@ -371,7 +372,7 @@ raised for any invalid dataset type.</p>
 <p><span class="versionmodified added">Added in version 3.18.0.</span></p>
 </div>
 </dd>
-<dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read external variables (i.e. variables which are named by
+<dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read external variables (i.e. variables which are named by
 attributes, but are not present, in the parent file given
 by the <em>filename</em> parameter) from the given external
 files. Ignored if the parent file does not contain a
@@ -382,7 +383,7 @@ for the required external variables.</p>
 files, or is found in multiple external files, then the
 relevant metadata construct is still created, but without
 any metadata or data. In this case the construct’s
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">is_external</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">is_external</span></code> method will return <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">external='cell_measure.nc'</span></code></p>
 </dd>
@@ -392,7 +393,7 @@ any metadata or data. In this case the construct’s
 </dd>
 </dl>
 </dd>
-<dt>extra: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create extra, independent fields from netCDF variables
+<dt>extra: (sequence of) <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create extra, independent fields from netCDF variables
 that correspond to particular types of metadata constructs.
 Ignored if <em>domain</em> is True.</p>
 <p>The <em>extra</em> parameter may be one, or a sequence, of:</p>
@@ -440,7 +441,7 @@ parent field construct’s domain as possible by using the
 <a class="reference internal" href="../method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a> method of a returned field
 construct, instead of setting the <em>extra</em> parameter.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
 equal ignoring case to one of:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
@@ -456,7 +457,7 @@ globally-configured <a class="reference internal" href="cf.log_level.html#cf.log
 increasing numerical value corresponds to increasing
 verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special case
 of maximal and extreme verbosity.</p>
-<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output messages
 will be shown according to the value of the
 <a class="reference internal" href="cf.log_level.html#cf.log_level" title="cf.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.log_level</span></code></a> setting.</p>
 <p>Overall, the higher a non-negative integer or equivalent string
@@ -465,11 +466,11 @@ increasing verbosity, the more description that is printed to
 convey how the contents of the netCDF file were parsed and
 mapped to CF data model constructs.</p>
 </dd>
-<dt>warnings: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print warnings when an output field construct
+<dt>warnings: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print warnings when an output field construct
 is incomplete due to structural non-compliance of the
 dataset. By default such warnings are not displayed.</p>
 </dd>
-<dt>um: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>For Met Office (UK) PP files and Met Office (UK) fields
+<dt>um: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>For Met Office (UK) PP files and Met Office (UK) fields
 files only, provide extra decoding instructions. This
 option is ignored for input files which are not PP or
 fields files. In most cases, how to decode a file is
@@ -478,7 +479,7 @@ headers, but when that is not possible then any of the
 following key/value pairs in the dictionary may be used to
 guide the decoding:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">'um_version'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">'um_version'</span></code>: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
 <p>The UM version to be used when decoding the
 header. Valid versions are, for example, <code class="docutils literal notranslate"><span class="pre">4.2</span></code>,
 <code class="docutils literal notranslate"><span class="pre">'6.6.3'</span></code> and <code class="docutils literal notranslate"><span class="pre">'8.2'</span></code>. In general, a given version
@@ -528,7 +529,7 @@ metres: <code class="docutils literal notranslate"><span class="pre">um_config={
 <p><span class="versionmodified added">Added in version 1.5.</span></p>
 </div>
 </dd>
-<dt>aggregate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If True (the default) or a dictionary (possibly empty)
+<dt>aggregate: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If True (the default) or a dictionary (possibly empty)
 then aggregate the field constructs read in from all input
 files into as few field constructs as possible by passing
 all of the field constructs found the input files to the
@@ -540,21 +541,21 @@ keyword arguments to the <a class="reference internal" href="cf.aggregate.html#c
 <p>If <em>aggregate</em> is False then the field constructs are not
 aggregated.</p>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then remove all size 1 dimensions from field
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then remove all size 1 dimensions from field
 construct data arrays, regardless of how the data are
 stored in the dataset. If False (the default) then the
 presence or not of size 1 dimensions is determined by how
 the data are stored in its dataset.</p>
 </dd>
-<dt>unsqueeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ensure that field construct data arrays span
+<dt>unsqueeze: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ensure that field construct data arrays span
 all of the size 1 dimensions, regardless of how the data
 are stored in the dataset. If False (the default) then the
 presence or not of size 1 dimensions is determined by how
 the data are stored in its dataset.</p>
 </dd>
-<dt>select: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a>, optional</dt><dd><p>Only return field constructs whose identities match the
+<dt>select: (sequence of) <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a>, optional</dt><dd><p>Only return field constructs whose identities match the
 given values(s), i.e. those fields <code class="docutils literal notranslate"><span class="pre">f</span></code> for which
-<code class="docutils literal notranslate"><span class="pre">f.match_by_identity(*select)</span></code> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. See
+<code class="docutils literal notranslate"><span class="pre">f.match_by_identity(*select)</span></code> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. See
 <a class="reference internal" href="../method/cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.match_by_identity</span></code></a> for details.</p>
 <p>This is equivalent to, but faster than, not using the
 <em>select</em> parameter but applying its value to the returned
@@ -563,7 +564,7 @@ method. For example, <code class="docutils literal notranslate"><span class="pre
 <span class="pre">select='air_temperature')</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">fl</span> <span class="pre">=</span>
 <span class="pre">cf.read(file).select_by_identity('air_temperature')</span></code>.</p>
 </dd>
-<dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print a warning for the presence of
+<dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print a warning for the presence of
 <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> or <code class="docutils literal notranslate"><span class="pre">valid_range</span></code> properties
 on field constructs and metadata constructs that have
 data. By default no such warning is issued.</p>
@@ -575,7 +576,7 @@ turning off all automatic masking.</p>
 <p><span class="versionmodified added">Added in version 3.4.0.</span></p>
 </div>
 </dd>
-<dt>mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then mask by convention the data of
+<dt>mask: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then mask by convention the data of
 field and metadata constructs.</p>
 <p>A netCDF array is masked depending on the values of any of
 the netCDF attributes <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code>, <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>,
@@ -585,7 +586,7 @@ the netCDF attributes <code class="docutils literal notranslate"><span class="pr
 <p><span class="versionmodified added">Added in version 3.4.0.</span></p>
 </div>
 </dd>
-<dt>unpack: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If True, the default, then unpack arrays by convention
+<dt>unpack: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If True, the default, then unpack arrays by convention
 when the data is read from disk.</p>
 <p>Unpacking is determined by netCDF conventions for the
 following variable attributes: <code class="docutils literal notranslate"><span class="pre">add_offset</span></code>,
@@ -594,7 +595,7 @@ following variable attributes: <code class="docutils literal notranslate"><span 
 <p><span class="versionmodified added">Added in version 3.17.0.</span></p>
 </div>
 </dd>
-<dt>domain: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return only the domain constructs that are
+<dt>domain: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return only the domain constructs that are
 explicitly defined by CF-netCDF domain variables, ignoring
 all CF-netCDF data variables. By default only the field
 constructs defined by CF-netCDF data variables are
@@ -615,11 +616,11 @@ function. For example:</p>
 <p><span class="versionmodified added">Added in version 3.11.0.</span></p>
 </div>
 </dd>
-<dt>backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Which library to use for opening a string-like, file-like,
+<dt>backend: <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Which library to use for opening a string-like, file-like,
 or directory-like dataset. An attempt to read the dataset
 is made by the given backends in the order in which they
 are provided, stopping after the first successful read.
-By default <em>backend</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, which is equivalent to
+By default <em>backend</em> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, which is equivalent to
 providing the ordered sequence of backends:</p>
 <p><code class="docutils literal notranslate"><span class="pre">('pyfive',</span> <span class="pre">'zarr',</span> <span class="pre">'umfive',</span> <span class="pre">'netCDF4',</span> <span class="pre">'netcdf_file',</span>
 <span class="pre">'h5py',</span> <span class="pre">'xarray')</span></code></p>
@@ -686,7 +687,7 @@ order: <code class="docutils literal notranslate"><span class="pre">('netCDF4',<
 <p><span class="versionmodified added">Added in version 3.21.0.</span></p>
 </div>
 </dd>
-<dt>backend_options: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The options to use with each backend when opening a
+<dt>backend_options: <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The options to use with each backend when opening a
 dataset.</p>
 <p>Each backend’s options may be defined with the following
 dictionary keys, which take a value of a dictionary of
@@ -762,7 +763,7 @@ values, but <code class="docutils literal notranslate"><span class="pre">chunks<
 <code class="docutils literal notranslate"><span class="pre">filename_or_obj</span></code> argument can not be provided.</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'zarr_options'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">'zarr_options'</span></code>: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</p>
 <blockquote>
 <div><p>Keyword arguments that are passed to <a class="reference external" href="https://zarr.readthedocs.io/en/stable/api/zarr/functions/open/#zarr.open" title="(in zarr-python v0.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr.open</span></code></a> when
 opening a dataset with the <code class="docutils literal notranslate"><span class="pre">'zarr'</span></code> backend. The
@@ -785,9 +786,9 @@ provided.</p>
 <p><span class="versionmodified added">Added in version 3.21.0.</span></p>
 </div>
 </dd>
-<dt>storage_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Parameters for defining an <code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec</span></code> filesystem for
+<dt>storage_options: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Parameters for defining an <code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec</span></code> filesystem for
 accessing a dataset.</p>
-<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) and <em>filesystem</em> is also <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>,
+<p>If <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) and <em>filesystem</em> is also <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>,
 then a dataset is treated as described by the <em>datasets</em>
 parameter.</p>
 <p>If set to a dictionary of storage options then a dataset
@@ -810,7 +811,7 @@ filesystem <code class="docutils literal notranslate"><span class="pre">open</sp
 <p><span class="versionmodified added">Added in version 3.17.0.</span></p>
 </div>
 </dd>
-<dt>cache: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then cache the first and last array
+<dt>cache: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then cache the first and last array
 elements of metadata constructs (not field constructs) for
 fast future access. In addition, the second and
 penultimate array elements will be cached from coordinate
@@ -821,7 +822,7 @@ the file.</p>
 <p><span class="versionmodified added">Added in version 3.17.0.</span></p>
 </div>
 </dd>
-<dt>dask_chunks: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Specify the Dask chunking for data. May be one of the
+<dt>dask_chunks: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Specify the Dask chunking for data. May be one of the
 following:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code></p>
@@ -907,7 +908,7 @@ similar Dask chunk shapes as the <code class="docutils literal notranslate"><spa
 option, but without the guarantee that each storage
 chunk will lie entirely within exactly one Dask chunk.</p>
 </li>
-<li><p>A byte-size given by a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<li><p>A byte-size given by a <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
 <p>The Dask chunk size in bytes will be as close as
 possible to the given byte-size, favouring square-like
 chunk shapes. Any string value, accepted by the <em>chunks</em>
@@ -920,13 +921,13 @@ lies entirely within one Dask chunk.</p>
 </dd>
 </dl>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 <p>There is no Dask chunking, i.e. every data array has one
 Dask chunk regardless of its size. In this case each
 storage chunk is guaranteed to lie entirely within the
 one Dask chunk.</p>
 </li>
-<li><p>Positive <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p>
+<li><p>Positive <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p>
 <p>Every dimension of all Dask chunks has this number of
 elements. There is no guarantee that a storage chunk
 lies entirely within one Dask chunk.</p>
@@ -936,7 +937,7 @@ give Dask chunks with shape (10, 10, 10).</p>
 </dd>
 </dl>
 </li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p>
 <p>Each of dictionary key identifies a file dimension, with
 a value that defines the Dask chunking for that
 dimension whenever it is spanned by a data array. A file
@@ -952,10 +953,10 @@ coordinate variable that spans the dimension
 (e.g. <code class="docutils literal notranslate"><span class="pre">'Y'</span></code>).</p></li>
 </ol>
 <p>The dictionary values may be a byte-size string,
-<code class="docutils literal notranslate"><span class="pre">'auto'</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, with the same meanings as
+<code class="docutils literal notranslate"><span class="pre">'auto'</span></code>, <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, with the same meanings as
 those types for the <em>dask_chunks</em> parameter itself, but
 applying only to the specified dimension. In addition, a
-dictionary value may be a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of integers
+dictionary value may be a <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of integers
 that sum to the dimension size.</p>
 <p>Not specifying a file dimension in the dictionary is
 equivalent to it being defined with a value of
@@ -986,7 +987,7 @@ or <code class="docutils literal notranslate"><span class="pre">{'T':</span> <sp
 </li>
 </ul>
 </dd>
-<dt>store_dataset_chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then store the dataset chunking
+<dt>store_dataset_chunks: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then store the dataset chunking
 strategy for each returned data array. The dataset
 chunking strategy is then accessible via an object’s
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code> method. When the dataset chunking
@@ -995,7 +996,7 @@ written to a new netCDF file with <a class="reference internal" href="cf.write.h
 (unless the strategy is modified prior to writing).</p>
 <p>If False then no dataset chunking strategy is stored
 (i.e. the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code> method will return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> for all returned <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). In this case,
+<a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> for all returned <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). In this case,
 when the data is written to a new dataset, the dataset
 chunking strategy will be determined by
 <a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>.</p>
@@ -1006,7 +1007,7 @@ at the time of writing.</p>
 <p><span class="versionmodified added">Added in version 3.17.0.</span></p>
 </div>
 </dd>
-<dt>store_dataset_shards: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then store the Zarr dataset sharding
+<dt>store_dataset_shards: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then store the Zarr dataset sharding
 strategy for each returned data array. The dataset
 sharding strategy is then accessible via an object’s
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_shards</span></code> method. When the dataset sharding
@@ -1016,7 +1017,7 @@ written to a new Zarr dataset with <a class="reference internal" href="cf.write.
 <p>If False, or if the dataset being read does not support
 sharding (such as a Zarr v2 or netCDF dataset), then no
 dataset sharding strategy is stored (i.e. the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_shards</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> for all
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_shards</span></code> method will return <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> for all
 returned <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). In this case, when the data is
 written to a new Zarr dataset, the dataset sharding
 strategy will be determined by <a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>.</p>
@@ -1024,12 +1025,12 @@ strategy will be determined by <a class="reference internal" href="cf.write.html
 <p><span class="versionmodified added">Added in version 3.19.0.</span></p>
 </div>
 </dd>
-<dt>cfa: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Configure the reading of CF-netCDF aggregation files.</p>
+<dt>cfa: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Configure the reading of CF-netCDF aggregation files.</p>
 <p>The dictionary may have any subset of the following
 key/value pairs that supplement or override the
 information read from the file:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">'replace_directory'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">'replace_directory'</span></code>: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p>
 <p>A dictionary whose key/value pairs define modifications
 to be applied to the directories of the fragment file
 locations. The dictionary comprises keyword arguments to
@@ -1058,7 +1059,7 @@ wherever it occurs: <code class="docutils literal notranslate"><span class="pre"
 <p><span class="versionmodified added">Added in version 3.15.0.</span></p>
 </div>
 </dd>
-<dt>cfa_write: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Register the intention for named construct types to be
+<dt>cfa_write: (sequence of) <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Register the intention for named construct types to be
 subsequently written as CF-netCDF aggregation variables.</p>
 <p>This makes no difference to the logical content of any
 construct, but ensures that the data of each of specified
@@ -1104,7 +1105,7 @@ for the creation CF-netCDF aggregation variables.</p>
 </table>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If the <em>dask_chunks</em> parameter is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
+<p>If the <em>dask_chunks</em> parameter is set to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
 or <code class="docutils literal notranslate"><span class="pre">-1</span></code> then the data of all constructs will
 already have only one Dask chunk, so in this
 case setting <em>cfa_write</em> will have no further
@@ -1124,11 +1125,11 @@ be written as CF-netCDF aggregation variables:
 <p><span class="versionmodified added">Added in version 3.17.0.</span></p>
 </div>
 </dd>
-<dt>cfa_filesystem: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or filesystem, optional</dt><dd><p>A pre-authenticated filesystem object (for example an
+<dt>cfa_filesystem: <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or filesystem, optional</dt><dd><p>A pre-authenticated filesystem object (for example an
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec</span></code> filesystem instance) to use for opening the
 fragment datasets indicated in a CF-netCDF aggregation
 file.</p>
-<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then a fragment dataset path is
+<p>If <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then a fragment dataset path is
 passed unchanged to the backends defined by the
 <em>cfa_backend</em> parameter.</p>
 <p>When provided, a fragment dataset path (<code class="docutils literal notranslate"><span class="pre">fragment</span></code>) is
@@ -1142,7 +1143,7 @@ treated as the file-like object <code class="docutils literal notranslate"><span
 <p><span class="versionmodified added">Added in version 3.21.0.</span></p>
 </div>
 </dd>
-<dt>cfa_backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Which library or libraries to use for reading the dataset
+<dt>cfa_backend: <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Which library or libraries to use for reading the dataset
 fragments indicated in a CF-netCDF aggregation file. When
 the fragments are accessed (which does not occur during
 <a class="reference internal" href="#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>), an attempt to open each fragment
@@ -1173,7 +1174,7 @@ are:</p>
 </tr>
 </tbody>
 </table>
-<p>By default <em>cfa_backend</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, which is equivalent to
+<p>By default <em>cfa_backend</em> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, which is equivalent to
 providing the ordered sequence of backends:</p>
 <p><code class="docutils literal notranslate"><span class="pre">('pyfive',</span> <span class="pre">'zarr',</span> <span class="pre">'netCDF4',</span> <span class="pre">'netcdf_file',</span> <span class="pre">'h5py')</span></code></p>
 <dl class="simple">
@@ -1189,14 +1190,14 @@ order: <code class="docutils literal notranslate"><span class="pre">('netCDF4',<
 </div>
 </dd>
 </dl>
-<p>{{cfa_backend_options: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional}}</p>
+<p>{{cfa_backend_options: <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional}}</p>
 <blockquote>
 <div><div class="versionadded">
 <p><span class="versionmodified added">Added in version 3.21.0.</span></p>
 </div>
 </div></blockquote>
 <dl>
-<dt>to_memory: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read all data arrays of the named construct types into
+<dt>to_memory: (sequence of) <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read all data arrays of the named construct types into
 memory. By default, lazy loading is employed for all data
 arrays.</p>
 <p>The <em>to_memory</em> parameter may be one, or a sequence, of:</p>
@@ -1254,7 +1255,7 @@ arrays into memory: <code class="docutils literal notranslate"><span class="pre"
 <p><span class="versionmodified added">Added in version 3.17.0.</span></p>
 </div>
 </dd>
-<dt>group_dimension_search: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>How to interpret a dimension name that contains no
+<dt>group_dimension_search: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>How to interpret a dimension name that contains no
 group-separator characters, such as <code class="docutils literal notranslate"><span class="pre">dim</span></code> (as opposed to
 <code class="docutils literal notranslate"><span class="pre">group/dim</span></code>, <code class="docutils literal notranslate"><span class="pre">/group/dim</span></code>, <code class="docutils literal notranslate"><span class="pre">../dim</span></code>, etc.). The
 <em>group_dimension_search</em> parameter must be one of:</p>
@@ -1316,8 +1317,8 @@ pre-processing (tilde/variable expansion, globbing and
 directory walking) is bypassed. The file is opened by
 calling <code class="docutils literal notranslate"><span class="pre">filesystem.open(dataset,</span> <span class="pre">'rb')</span></code>, which returns
 a file-like object that is passed to the netCDF backend.</p>
-<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) and <em>storage_options</em> is also
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, then a dataset is treated as described by the
+<p>If <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) and <em>storage_options</em> is also
+<a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, then a dataset is treated as described by the
 <em>datasets</em> parameter.</p>
 <p>When provided, a dataset is treated as the file-like
 object <code class="docutils literal notranslate"><span class="pre">filesystem.open(dataset,</span> <span class="pre">'rb')</span></code> which is passed
@@ -1330,7 +1331,7 @@ to the backends (see the <em>backend</em> parameter).</p>
 </div>
 </dd>
 </dl>
-<p>{{read _noncompliance_report: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional}}</p>
+<p>{{read _noncompliance_report: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional}}</p>
 <blockquote>
 <div><p>..versionadded:: 3.21.0</p>
 </div></blockquote>
@@ -1423,11 +1424,11 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-09-11.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
     </div>
 

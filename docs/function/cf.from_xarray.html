@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cf.from_xarray &#8212; Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=5dec66a6" />
+    <script src="../_static/documentation_options.js?v=2c304e30"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.to_xarray" href="cf.to_xarray.html" />
+    <link rel="prev" title="cf.climatology_cells" href="cf.climatology_cells.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.svg" alt="Logo of Python cf package"/>
+            </a></p>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.22.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cheat_sheet.html"><strong>Cheat Sheet</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../function.html"><strong>cf functions</strong></a><ul>
+      <li>Previous: <a href="cf.climatology_cells.html" title="previous chapter">cf.climatology_cells</a></li>
+      <li>Next: <a href="cf.to_xarray.html" title="next chapter">cf.to_xarray</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_static/logo_EC.png" height="40">
+<img src="../_static/logo_ERC.png" height="40">
+<img src="../_static/logo_NERC.png" height="40">
+<br>
+<img src="../_static/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-from-xarray">
+<h1>cf.from_xarray<a class="headerlink" href="#cf-from-xarray" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="cf.from_xarray">
+<span class="sig-prename descclassname"><span class="pre">cf.</span></span><span class="sig-name descname"><span class="pre">from_xarray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.22.0/cf/xarray_utils.py#L6-L18"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cf.from_xarray" title="Link to this definition">¶</a></dt>
+<dd><p>Convert an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset to CF field or domain constructs.</p>
+<p>In general (see the note below) <a class="reference internal" href="#cf.from_xarray" title="cf.from_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.from_xarray</span></code></a> is an in-memory
+operation which does two things: it maps the <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset
+variables and attributes onto CF constructs; and it copies
+pointers to the arrays describing the actual data, from the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset to the fields or domains. No actual data is
+copied.</p>
+<p><a class="reference internal" href="#cf.from_xarray" title="cf.from_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.from_xarray</span></code></a> treats the <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset as if it were an
+in-memory view of a netCDF dataset (even if it wasn’t created as
+such), and creates the same CF field or domain constructs that
+<a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> would if it were to read that netCDF dataset.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For optimal performance and minimal memory usage,
+open <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> datasets from disk with
+<code class="docutils literal notranslate"><span class="pre">decode_cf=False</span></code>. This is <strong>not</strong> the default for
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.open_dataset</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.open_datatree</span></code>.</p>
+<p>If the dataset is opened with the default
+<code class="docutils literal notranslate"><span class="pre">decode_cf=True</span></code>, the automatic reversal of
+xarray’s CF decoding for selected variables will
+eagerly load their data arrays into memory.  This
+applies to variables with explicit <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> or
+<code class="docutils literal notranslate"><span class="pre">missing_value</span></code> attributes, and to variables
+decoded into non-numeric time or timedelta objects.</p>
+<p>This is never an issue for datasets created with
+<a class="reference internal" href="cf.to_xarray.html#cf.to_xarray" title="cf.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.to_xarray</span></code></a>:
+<code class="docutils literal notranslate"><span class="pre">cf.from_xarray(cf.to_xarray(f))</span></code> will never
+load those data arrays into memory.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.13.4.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.to_xarray.html#cf.to_xarray" title="cf.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.to_xarray</span></code></a>, <a class="reference internal" href="cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ds: <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.Dataset</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.DataTree</span></code></dt><dd><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset to be converted. The group structure
+of an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.DataTree</span></code> instance is preserved in the
+returned field or domains.</p>
+</dd>
+<dt>domain: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False (the default) then return only field constructs
+that are defined by CF data variables in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code>
+dataset, ignoring all CF domain variables. If True then
+only the domain constructs that are explicitly defined by
+CF domain variables in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset are returned.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>sequence of <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference internal" href="../class/cf.Domain.html#cf.Domain" title="cf.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a></dt><dd><p>The equivalent fields or domains.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Examples<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<p>Create some field constructs, convert them to an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset,
+convert the <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset back to field constructs, and show
+that (in this case) no information has been lost.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_fields</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">[&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span>
+<span class="go">&lt;xarray.Dataset&gt; Size: 3kB</span>
+<span class="go">Dimensions:                     (lat: 5, lon: 8, time_1: 3, air_pressure: 1,</span>
+<span class="go">                                 grid_latitude: 4, grid_longitude: 5,</span>
+<span class="go">                                 bounds2: 2, bounds4: 4)</span>
+<span class="go">Coordinates:</span>
+<span class="go">  * lat                         (lat) float64 40B -75.0 -45.0 0.0 45.0 75.0</span>
+<span class="go">  * lon                         (lon) float64 64B 22.5 67.5 ... 292.5 337.5</span>
+<span class="go">  * time_1                      (time_1) float64 24B 120.5 121.5 122.5</span>
+<span class="go">  * air_pressure                (air_pressure) float64 8B 850.0</span>
+<span class="go">  * grid_latitude               (grid_latitude) float64 32B 0.44 0.0 -0.44 -0.88</span>
+<span class="go">  * grid_longitude              (grid_longitude) float64 40B -1.18 ... 0.58</span>
+<span class="go">    latitude                    (grid_latitude, grid_longitude) float64 160B dask.array&lt;chunksize=(4, 5), meta=np.ndarray&gt;</span>
+<span class="go">    longitude                   (grid_latitude, grid_longitude) float64 160B dask.array&lt;chunksize=(4, 5), meta=np.ndarray&gt;</span>
+<span class="go">    time                        float64 8B dask.array&lt;chunksize=(), meta=np.ndarray&gt;</span>
+<span class="go">Dimensions without coordinates: bounds2, bounds4</span>
+<span class="go">Data variables:</span>
+<span class="go">    lat_bnds                    (lat, bounds2) float64 80B dask.array&lt;chunksize=(5, 2), meta=np.ndarray&gt;</span>
+<span class="go">    lon_bnds                    (lon, bounds2) float64 128B dask.array&lt;chunksize=(8, 2), meta=np.ndarray&gt;</span>
+<span class="go">    q                           (lat, lon) float64 320B dask.array&lt;chunksize=(5, 8), meta=np.ndarray&gt;</span>
+<span class="go">    bounds                      (time_1, bounds2) float64 48B dask.array&lt;chunksize=(3, 2), meta=np.ndarray&gt;</span>
+<span class="go">    bounds_1                    (grid_latitude, bounds2) float64 64B dask.array&lt;chunksize=(4, 2), meta=np.ndarray&gt;</span>
+<span class="go">    bounds_2                    (grid_longitude, bounds2) float64 80B dask.array&lt;chunksize=(5, 2), meta=np.ndarray&gt;</span>
+<span class="go">    latitude_bounds             (grid_latitude, grid_longitude, bounds4) float64 640B dask.array&lt;chunksize=(4, 5, 4), meta=np.ndarray&gt;</span>
+<span class="go">    bounds_3                    (grid_latitude, grid_longitude, bounds4) float64 640B dask.array&lt;chunksize=(4, 5, 4), meta=np.ndarray&gt;</span>
+<span class="go">    rotated_latitude_longitude  object 8B nan</span>
+<span class="go">    ua                          (time_1, air_pressure, grid_latitude, grid_longitude) float32 240B dask.array&lt;chunksize=(3, 1, 4, 5), meta=np.ndarray&gt;</span>
+<span class="go">Attributes:</span>
+<span class="go">    Conventions:  CF-1.13</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">from_xarray</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">[&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">field1</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">field0</span><span class="p">)</span> <span class="k">for</span> <span class="n">field0</span><span class="p">,</span> <span class="n">field1</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">)]</span>
+<span class="go">[True, True]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &#169;2026, NCAS | Page built on 2026-11-27.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=5dec66a6" />
-    <script src="_static/documentation_options.js?v=be4f90db"></script>
+    <script src="_static/documentation_options.js?v=2c304e30"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.21.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.22.0</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="cf-functions">
 <span id="function"></span><h1><strong>cf functions</strong><a class="headerlink" href="#cf-functions" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.21.0 for version 1.13 of the CF conventions.</p>
+<p>Version 3.22.0 for version 1.13 of the CF conventions.</p>
 <section id="reading-and-writing">
 <h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
@@ -148,6 +148,25 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cf.climatology_cells.html#cf.climatology_cells" title="cf.climatology_cells"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.climatology_cells</span></code></a></p></td>
 <td><p>Return a climatological cells dictionary for <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="conversion-from-and-to-xarray-and-iris">
+<h2>Conversion from and to xarray and iris<a class="headerlink" href="#conversion-from-and-to-xarray-and-iris" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.from_xarray.html#cf.from_xarray" title="cf.from_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.from_xarray</span></code></a></p></td>
+<td><p>Convert an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset to CF field or domain constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.to_xarray.html#cf.to_xarray" title="cf.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.to_xarray</span></code></a></p></td>
+<td><p>Convert CF field or domain constructs to an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.from_iris.html#cf.from_iris" title="cf.from_iris"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.from_iris</span></code></a></p></td>
+<td><p>Convert <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes to CF field constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.to_iris.html#cf.to_iris" title="cf.to_iris"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.to_iris</span></code></a></p></td>
+<td><p>Convert CF field constructs to <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes.</p></td>
 </tr>
 </tbody>
 </table>
@@ -531,7 +550,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-28.
+      &#169;2026, NCAS | Page built on 2026-11-27.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
